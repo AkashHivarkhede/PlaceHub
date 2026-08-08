@@ -92,7 +92,6 @@ def job_list(request):
 
 
 
-@login_required
 def job_detail(request, id):
 
     job = get_object_or_404(
