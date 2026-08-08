@@ -109,21 +109,29 @@ def job_detail(request, id):
         id=job.id
     )[:5]
 
-
     already_applied = False
     student = None
     experience_mismatch = False
 
-    if hasattr(request.user, "student_profile"):
+    # Only check student information if user is logged in
+    if request.user.is_authenticated:
 
-        student = request.user.student_profile
+        try:
+            student = request.user.student_profile
 
-        already_applied = job.applications.filter(
-            student=request.user.student_profile
-        ).exists()
+            already_applied = job.applications.filter(
+                student=student
+            ).exists()
 
-    if not already_applied:
-        experience_mismatch = student.experience < job.experience
+            # Check experience only when student exists
+            if not already_applied:
+                experience_mismatch = (
+                    student.experience < job.experience
+                )
+
+        except StudentProfile.DoesNotExist:
+
+            student = None
 
     context = {
 
@@ -144,7 +152,6 @@ def job_detail(request, id):
         "job_details.html",
         context
     )
-
 
 @login_required
 def apply_job(request, id):

@@ -9,10 +9,40 @@
       {% for message in messages %}
         <div class="alert
             {% if message.tags == 'error' %}
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
                
                 alert-danger
 
+
+
+
+
+
+
+
+
+
+
           {% else %}
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             
                 alert-{{ message.tags }}
           {% endif %}
@@ -135,11 +165,14 @@
             </p>
 
             <hr />
-
-            {% if already_applied %}
-              <button class="btn btn-success w-100" disabled>Already Applied</button>
+            {% if user.is_authenticated %}
+              {% if already_applied %}
+                <button class="btn btn-success w-100" disabled>Already Applied</button>
+              {% else %}
+                <a href="{% url 'apply_job' job.id %}" class="btn btn-primary w-100">Apply Now</a>
+              {% endif %}
             {% else %}
-              <a href="{% url 'apply_job' job.id %}" class="btn btn-primary w-100">Apply Now</a>
+              <a href="{% url 'login' %}?next={% url 'apply_job' job.id %}" class="btn btn-primary">Apply Now</a>
             {% endif %}
           </div>
         </div>
