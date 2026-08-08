@@ -11,15 +11,7 @@ urlpatterns = [
 
     path('signup/company/', views.company_signup, name='signup_company'),
 
-    path(
-    "verify-email/",
-    views.verify_email,
-    name="verify_email"
-),
+    path("verify-email/", views.verify_email, name="verify_email"),
 
-path(
-    "resend-verification-otp/",
-    views.resend_verification_otp,
-    name="resend_verification_otp"
-),
+    path("resend-verification-otp/", views.resend_verification_otp, name="resend_verification_otp"),
 ]

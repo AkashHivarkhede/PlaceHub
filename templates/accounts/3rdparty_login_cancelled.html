@@ -1,0 +1,77 @@
+{% extends 'home.html' %}
+
+{% block content %}
+  <div class="container py-5">
+    <div class="row justify-content-center align-items-center" style="min-height: 75vh;">
+      <div class="col-12 col-sm-10 col-md-7 col-lg-5">
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+          <!-- Header -->
+          <div class="bg-primary text-white text-center py-4">
+            <div class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 76px; height: 76px;">
+              <i class="bi bi-x-circle text-danger fs-1"></i>
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div class="card-body px-4 px-md-5 py-5 text-center">
+            <h2 class="fw-bold mb-3">Login Cancelled</h2>
+
+            <p class="text-muted mb-4">
+              You cancelled the Google sign-in process.
+
+              If this was a mistake, you can return to
+              <strong class="text-dark">PlaceHub</strong>
+              and try again.
+            </p>
+
+            <!-- Information -->
+            <div class="alert alert-light border rounded-3 text-start mb-4">
+              <div class="d-flex align-items-start">
+                <i class="bi bi-info-circle text-primary fs-5 me-3"></i>
+
+                <div>
+                  <div class="fw-semibold mb-1">What happened?</div>
+
+                  <small class="text-muted">No changes were made to your PlaceHub account. You can safely try signing in again.</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Login Button -->
+            <a href="{% url 'login' %}" class="btn btn-primary w-100 py-3 rounded-pill fw-semibold shadow-sm">
+              <i class="bi bi-box-arrow-in-right me-2"></i>
+
+              Back to Login
+            </a>
+
+            <!-- Home -->
+            <div class="mt-4">
+              <a href="{% url 'home' %}" class="text-decoration-none text-muted">
+                <i class="bi bi-house me-2"></i>
+
+                Return to Home
+              </a>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="card-footer bg-light border-0 text-center py-3">
+            <small class="text-muted">
+              <i class="bi bi-shield-lock me-1"></i>
+
+              Your PlaceHub account remains secure.
+            </small>
+          </div>
+        </div>
+
+        <!-- Bottom text -->
+        <div class="text-center mt-4">
+          <small class="text-muted">
+            Need help?
+            <a href="{% url 'login' %}" class="text-decoration-none">Sign in again</a>
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
