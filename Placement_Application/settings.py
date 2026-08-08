@@ -7,18 +7,17 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-@5&a_&o7d+=my6j$krr9#x&8)91o=ca@farc0n4!1=1$wbj9x$'
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["akashhivarkhede.pythonanywhere.com"]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://akashhivarkhede.pythonanywhere.com",
+]
 
 
 # Application definition
@@ -157,10 +156,6 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 EMAIL_USE_SSL = False
-
-# EMAIL_HOST_USER = "sunny.hivarkhede@gmail.com"
-
-# EMAIL_HOST_PASSWORD = "xnna xozp bmbx dbwa"
 
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 
