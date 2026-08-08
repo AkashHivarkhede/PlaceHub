@@ -1,0 +1,2379 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+<form method="POST" enctype="multipart/form-data">
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert
+            {% if message.tags == 'error' %}
+                alert-danger
+            {% else %}
+                alert-{{ message.tags }}
+            {% endif %}
+            alert-dismissible fade show"
+            role="alert">
+
+            {{ message }}
+
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+{% csrf_token %}
+
+<div class="row">
+
+<!-- ================= LEFT SIDEBAR ================= -->
+
+<div class="col-xl-3 col-lg-3 mb-4 ">
+
+<div class="card border-0 shadow-lg sidebar-card">
+
+    <!-- Banner -->
+
+    <div class="sidebar-banner"></div>
+
+    <div class="card-body text-center">
+
+        {% if profile.profile_photo %}
+
+        <img src="{{ profile.profile_photo.url }}"
+             class="profile-img">
+
+        {% else %}
+
+        <img src="https://ui-avatars.com/api/?name={{ profile.first_name }}+{{ profile.last_name }}&size=180"
+             class="profile-img">
+
+        {% endif %}
+
+        <div class="mt-3">
+
+            <input
+                type="file"
+                name="profile_photo"
+                class="form-control">
+
+        </div>
+
+        <h3 class="fw-bold mt-4">
+
+            {{ profile.first_name }}
+
+            {{ profile.last_name }}
+
+        </h3>
+
+        <span class="badge bg-primary px-3 py-2">
+
+            Student
+
+        </span>
+
+        <hr>
+
+        <div class="contact-item">
+
+            <i class="bi bi-envelope-fill text-primary"></i>
+
+            {{ request.user.email }}
+
+        </div>
+
+        <div class="contact-item">
+
+            <i class="bi bi-telephone-fill text-success"></i>
+
+            {{ profile.phone_number }}
+
+        </div>
+
+        <div class="contact-item">
+
+            <i class="bi bi-geo-alt-fill text-danger"></i>
+
+            {{ profile.location }}
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Resume -->
+
+<div class="card border-0 shadow-lg mt-4">
+
+<div class="card-header bg-white">
+
+<h5 class="mb-0">
+
+Resume
+
+</h5>
+
+</div>
+
+<div class="card-body">
+
+{% if profile.resume %}
+
+<a href="{{ profile.resume.url }}"
+
+target="_blank"
+
+class="btn btn-success w-100 mb-3">
+
+<i class="bi bi-file-earmark-pdf-fill me-2"></i>
+
+View Resume
+
+</a>
+
+{% endif %}
+
+<input
+
+type="file"
+
+name="resume"
+
+class="form-control">
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ================= Basic Details ================= -->
+
+<div class="card border-0 shadow-lg mb-4 col-lg-9">
+
+    <div class="card-header bg-white py-3">
+
+    <div class="d-flex justify-content-between align-items-center">
+
+    <div>
+
+    <h4 class="mb-1 fw-bold">
+
+    <i class="bi bi-person-vcard-fill text-primary me-2"></i>
+
+    Basic Information
+
+    </h4>
+
+    <small class="text-muted">
+
+    Keep your personal information updated
+
+    </small>
+
+    </div>
+
+    <span class="badge bg-primary">
+
+    Personal
+
+    </span>
+
+    </div>
+
+    </div>
+
+    <div class="card-body p-4">
+
+    <div class="row g-4">
+
+    <div class="col-md-6">
+
+    <label class="form-label fw-semibold">
+
+    First Name
+
+    </label>
+
+    <div class="input-group">
+
+    <span class="input-group-text">
+
+    <i class="bi bi-person"></i>
+
+    </span>
+
+    <input
+
+    type="text"
+
+    name="first_name"
+
+    class="form-control"
+
+    value="{{ profile.first_name }}">
+
+    </div>
+
+    </div>
+
+    <div class="col-md-6">
+
+    <label class="form-label fw-semibold">
+
+    Last Name
+
+    </label>
+
+    <div class="input-group">
+
+    <span class="input-group-text">
+
+    <i class="bi bi-person"></i>
+
+    </span>
+
+    <input
+
+    type="text"
+
+    name="last_name"
+
+    class="form-control"
+
+    value="{{ profile.last_name }}">
+
+    </div>
+
+    </div>
+
+    <div class="col-md-6">
+
+    <label class="form-label fw-semibold">
+
+    Gender
+
+    </label>
+
+    <div class="input-group">
+
+    <span class="input-group-text">
+
+    <i class="bi bi-gender-ambiguous"></i>
+
+    </span>
+
+    <select
+
+    name="gender"
+
+    class="form-select">
+
+    <option value="">Select</option>
+
+    <option value="Male"
+
+    {% if profile.gender == "Male" %}selected{% endif %}>
+
+    Male
+
+    </option>
+
+    <option value="Female"
+
+    {% if profile.gender == "Female" %}selected{% endif %}>
+
+    Female
+
+    </option>
+
+    <option value="Other"
+
+    {% if profile.gender == "Other" %}selected{% endif %}>
+
+    Other
+
+    </option>
+
+    </select>
+
+    </div>
+
+    </div>
+
+    <div class="col-md-6">
+
+    <label class="form-label fw-semibold">
+
+    Date Of Birth
+
+    </label>
+
+    <div class="input-group">
+
+    <span class="input-group-text">
+
+    <i class="bi bi-calendar-event"></i>
+
+    </span>
+
+    <input
+
+    type="date"
+
+    name="date_of_birth"
+
+    class="form-control"
+
+    value="{{ profile.date_of_birth|date:'Y-m-d' }}">
+
+    </div>
+
+    </div>
+
+    <div class="col-md-6">
+
+    <label class="form-label fw-semibold">
+
+    Phone Number
+
+    </label>
+
+    <div class="input-group">
+
+    <span class="input-group-text">
+
+    <i class="bi bi-telephone"></i>
+
+    </span>
+
+    <input
+
+    type="text"
+
+    name="phone_number"
+
+    class="form-control"
+
+    value="{{ profile.phone_number }}">
+
+    </div>
+
+    </div>
+
+    <div class="col-md-6">
+
+    <label class="form-label fw-semibold">
+
+    Current Location
+
+    </label>
+
+    <div class="input-group">
+
+    <span class="input-group-text">
+
+    <i class="bi bi-geo-alt"></i>
+
+    </span>
+
+    <input
+
+    type="text"
+
+    name="location"
+
+    class="form-control"
+
+    value="{{ profile.location }}">
+
+    </div>
+
+    </div>
+
+    <div class="col-md-6">
+
+    <label class="form-label fw-semibold">
+
+    Experience
+
+    </label>
+
+    <div class="input-group">
+
+    <span class="input-group-text">
+
+    <i class="bi bi-briefcase"></i>
+
+    </span>
+
+    <input
+
+    type="number"
+
+    step="0.1"
+
+    name="experience"
+
+    class="form-control"
+
+    value="{{ profile.experience }}">
+
+    <span class="input-group-text">
+
+    Years
+
+    </span>
+
+    </div>
+
+    </div>
+
+    <div class="col-md-6">
+
+    <label class="form-label fw-semibold">
+
+    GitHub
+
+    </label>
+
+    <div class="input-group">
+
+    <span class="input-group-text">
+
+    <i class="bi bi-github"></i>
+
+    </span>
+
+    <input
+
+    type="url"
+
+    name="github_url"
+
+    class="form-control"
+
+    value="{{ profile.github_url }}">
+
+    </div>
+
+    </div>
+
+    <div class="col-md-12">
+
+    <label class="form-label fw-semibold">
+
+    LinkedIn
+
+    </label>
+
+    <div class="input-group">
+
+    <span class="input-group-text">
+
+    <i class="bi bi-linkedin"></i>
+
+    </span>
+
+    <input
+
+    type="url"
+
+    name="linkedin_url"
+
+    class="form-control"
+
+    value="{{ profile.linkedin_url }}">
+
+    </div>
+
+    </div>
+
+    </div>
+
+</div>
+
+<!-- ================= EDUCATION ================= -->
+ 
+
+
+<div class="card border-0 shadow-lg mb-4">
+
+    <div class="card-header bg-white py-3">
+
+    <div class="d-flex justify-content-between align-items-center">
+
+    <div>
+
+    <h4 class="fw-bold mb-1">
+
+    <i class="bi bi-mortarboard-fill text-primary me-2"></i>
+
+    Education
+
+    </h4>
+
+    <small class="text-muted">
+
+    Manage your academic qualifications
+
+    </small>
+
+    </div>
+
+    <button
+    type="button"
+    class="btn btn-primary rounded-pill px-4"
+    data-bs-toggle="modal"
+    data-bs-target="#educationModal">
+
+    <i class="bi bi-plus-circle me-2"></i>
+
+    Add Education
+
+    </button>
+
+    </div>
+
+    </div>
+
+    <div class="card-body bg-light">
+
+    {% for education in profile.educational_background.all %}
+
+            <div class="education-card">
+
+            <div class="row align-items-center">
+
+            <div class="col-lg-9">
+
+            <div class="d-flex align-items-center mb-3">
+
+            <div class="education-icon">
+
+            <i class="bi bi-mortarboard-fill"></i>
+
+            </div>
+
+            <div class="ms-3">
+
+            <h5 class="fw-bold mb-1">
+
+            {{ education.get_education_type_display }}
+
+            </h5>
+
+            <p class="text-primary fw-semibold mb-0">
+
+            {{ education.institution_name }}
+
+            </p>
+
+            </div>
+
+            </div>
+
+            <div class="row">
+
+            <div class="col-md-6">
+
+            <p>
+
+            <strong>
+
+            Board / University
+
+            </strong>
+
+            <br>
+
+            {{ education.board_or_university }}
+
+            </p>
+
+            </div>
+
+            <div class="col-md-6">
+
+            <p>
+
+            <strong>
+
+            Course
+
+            </strong>
+
+            <br>
+
+            {{ education.course_name|default:"-" }}
+
+            </p>
+
+            </div>
+
+            <div class="col-md-6">
+
+            <p>
+
+            <strong>
+
+            Specialization
+
+            </strong>
+
+            <br>
+
+            {{ education.specialization|default:"-" }}
+
+            </p>
+
+            </div>
+
+            <div class="col-md-6">
+
+            <p>
+
+            <strong>
+
+            Passing Year
+
+            </strong>
+
+            <br>
+
+            {{ education.passing_year }}
+
+            </p>
+
+            </div>
+
+            </div>
+
+            </div>
+
+            <div class="col-lg-3 text-lg-end mt-3 mt-lg-0">
+
+            {% if education.percentage %}
+
+            <div class="badge bg-success fs-6 px-3 py-2 mb-2">
+
+            {{ education.percentage }} %
+
+            </div>
+
+            {% endif %}
+
+            {% if education.cgpa %}
+
+            <div class="badge bg-warning text-dark fs-6 px-3 py-2 mb-3">
+
+            CGPA {{ education.cgpa }}
+
+            </div>
+
+            {% endif %}
+
+            <div class="d-grid gap-2">
+
+            <button
+                    type="button"
+                    class="btn btn-outline-primary btn-sm editEducationBtn"
+
+                    data-id="{{ education.id }}"
+                    data-type="{{ education.education_type }}"
+                    data-institution="{{ education.institution_name }}"
+                    data-board="{{ education.board_or_university }}"
+                    data-course="{{ education.course_name }}"
+                    data-specialization="{{ education.specialization }}"
+                    data-percentage="{{ education.percentage }}"
+                    data-cgpa="{{ education.cgpa }}"
+                    data-year="{{ education.passing_year }}"
+
+                    data-bs-toggle="modal"
+                    data-bs-target="#editEducationModal">
+
+                    <i class="bi bi-pencil-square me-1"></i>
+
+                    Edit
+
+            </button>
+
+
+            <a
+                href="{% url 'delete_education' education.id %}"
+                class="btn btn-outline-danger btn-sm"
+                onclick="return confirm('Delete this education?')">
+
+                <i class="bi bi-trash me-1"></i>
+
+            Delete
+
+            </a>
+
+            </div>
+
+
+
+            </div>
+
+            </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="text-center py-5">
+
+            <i class="bi bi-mortarboard display-3 text-muted"></i>
+
+            <h4 class="mt-3">
+
+            No Education Added
+
+            </h4>
+
+            <p class="text-muted">
+
+            Add your academic qualifications.
+
+            </p>
+
+            <button
+
+            class="btn btn-primary"
+
+            data-bs-toggle="modal"
+
+            data-bs-target="#educationModal">
+
+            Add Education
+
+            </button>
+
+            </div>
+
+    {% endfor %}
+
+    </div>
+</div>
+
+
+<!-- ================= PROJECTS ================= -->
+
+
+<div class="card-header bg-white py-3">
+
+    <div class="d-flex justify-content-between align-items-center">
+
+        <div>
+
+            <h4 class="fw-bold mb-1">
+
+                <i class="bi bi-kanban-fill text-primary me-2"></i>
+
+                Projects
+
+            </h4>
+
+            <small class="text-muted">
+
+                Showcase your academic and professional projects
+
+            </small>
+
+        </div>
+
+        <button
+            type="button"
+            class="btn btn-primary rounded-pill px-4"
+            data-bs-toggle="modal"
+            data-bs-target="#addProjectModal">
+
+            <i class="bi bi-plus-circle me-2"></i>
+
+            Add Project
+
+        </button>
+
+    </div>
+
+</div>
+
+<div class="card-body bg-light">
+
+    {% for project in projects %}
+
+    <div class="education-card">
+
+        <div class="row align-items-center">
+
+            <!-- Left Side -->
+
+            <div class="col-lg-9">
+
+                <div class="d-flex align-items-center mb-3">
+
+                    <div class="education-icon">
+
+                        <i class="bi bi-kanban-fill"></i>
+
+                    </div>
+
+                    <div class="ms-3">
+
+                        <h5 class="fw-bold mb-1">
+
+                            {{ project.project_title }}
+
+                        </h5>
+
+                        <p class="text-primary fw-semibold mb-0">
+
+                            {{ project.role|default:"Project" }}
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6">
+
+                        <p>
+
+                            <strong>
+
+                                Technologies
+
+                            </strong>
+
+                            <br>
+
+                            {{ project.technologies_used }}
+
+                        </p>
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <p>
+
+                            <strong>
+
+                                Duration
+
+                            </strong>
+
+                            <br>
+
+                            {{ project.start_date }}
+
+                            -
+
+                            {% if project.currently_working %}
+
+                                Present
+
+                            {% else %}
+
+                                {{ project.end_date }}
+
+                            {% endif %}
+
+                        </p>
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <p>
+
+                            <strong>
+
+                                GitHub
+
+                            </strong>
+
+                            <br>
+
+                            {% if project.github_url %}
+
+                                <a href="{{ project.github_url }}"
+                                   target="_blank"
+                                   class="text-decoration-none">
+
+                                    View Repository
+
+                                </a>
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </p>
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <p>
+
+                            <strong>
+
+                                Live Demo
+
+                            </strong>
+
+                            <br>
+
+                            {% if project.live_url %}
+
+                                <a href="{{ project.live_url }}"
+                                   target="_blank"
+                                   class="text-decoration-none">
+
+                                    Visit Project
+
+                                </a>
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </p>
+
+                    </div>
+
+                    <div class="col-12">
+
+                        <p class="mb-0">
+
+                            <strong>
+
+                                Description
+
+                            </strong>
+
+                            <br>
+
+                            {{ project.project_description }}
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Right Side -->
+
+            <div class="col-lg-3 text-lg-end mt-3 mt-lg-0">
+
+                {% if project.currently_working %}
+
+                    <div class="badge bg-success fs-6 px-3 py-2 mb-3">
+
+                        Ongoing
+
+                    </div>
+
+                {% else %}
+
+                    <div class="badge bg-secondary fs-6 px-3 py-2 mb-3">
+
+                        Completed
+
+                    </div>
+
+                {% endif %}
+
+                <div class="d-grid gap-2">
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-primary btn-sm editProjectBtn"
+
+                        data-id="{{ project.id }}"
+                        data-title="{{ project.project_title|escape }}"
+                        data-role="{{ project.role|escape }}"
+                        data-description="{{ project.project_description|escape }}"
+                        data-technologies="{{ project.technologies_used|escape }}"
+                        data-github="{{ project.github_url|default:'' }}"
+                        data-live="{{ project.live_url|default:'' }}"
+                        data-start="{{ project.start_date|date:'Y-m-d' }}"
+                        data-end="{% if project.end_date %}{{ project.end_date|date:'Y-m-d' }}{% endif %}"
+                        data-currentlyworking="{% if project.currently_working %}true{% else %}false{% endif %}"
+
+                        data-bs-toggle="modal"
+                        data-bs-target="#editProjectModal">
+
+                        <i class="bi bi-pencil-square me-1"></i>
+
+                        Edit
+
+                    </button>
+
+                    <a
+                        href="{% url 'delete_project' project.id %}"
+                        class="btn btn-outline-danger btn-sm"
+                        onclick="return confirm('Delete this project?')">
+
+                        <i class="bi bi-trash me-1"></i>
+
+                        Delete
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% empty %}
+
+    <div class="text-center py-5">
+
+        <i class="bi bi-kanban display-3 text-muted"></i>
+
+        <h4 class="mt-3">
+
+            No Projects Added
+
+        </h4>
+
+        <p class="text-muted">
+
+            Add your academic, internship or personal projects.
+
+        </p>
+
+        <button
+            class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#addProjectModal">
+
+            Add Project
+
+        </button>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+<!-- ================= SKILLS ================= -->
+
+<div class="card border-0 shadow-lg mb-4">
+
+    <div class="card-header bg-white py-3">
+
+    <div class="d-flex justify-content-between align-items-center">
+
+    <div>
+
+    <h4 class="fw-bold mb-1">
+
+    <i class="bi bi-lightning-charge-fill text-warning me-2"></i>
+
+    Key Skills
+
+    </h4>
+
+    <small class="text-muted">
+
+    Select your technical & soft skills
+
+    </small>
+
+    </div>
+
+    </div>
+
+    </div>
+
+    <div class="card-body">
+
+    <div class="chip-container">
+
+    {% for skill in skills %}
+
+    <label class="chip">
+
+    <input
+
+    type="checkbox"
+
+    name="skills"
+
+    value="{{ skill.id }}"
+
+    id="skill{{ skill.id }}"
+
+    {% if skill in profile.skills.all %}checked{% endif %}>
+
+    <span>
+
+    {{ skill.name }}
+
+    </span>
+
+    </label>
+
+    {% endfor %}
+
+    </div>
+
+    <hr>
+
+    <div class="input-group mt-4">
+
+    <input
+
+    type="text"
+
+    name="new_skill"
+
+    class="form-control"
+
+    placeholder="Add New Skill">
+
+    <span class="input-group-text bg-primary text-white">
+
+    <i class="bi bi-plus-lg"></i>
+
+    </span>
+
+    </div>
+
+    </div>
+
+</div>
+
+<!-- ================= HOBBIES ================= -->
+
+<div class="card border-0 shadow-lg mb-4">
+
+    <div class="card-header bg-white py-3">
+
+    <h4 class="fw-bold">
+
+    <i class="bi bi-controller text-danger me-2"></i>
+
+    Hobbies
+
+    </h4>
+
+    </div>
+
+    <div class="card-body">
+
+    <div class="chip-container">
+
+    {% for hobby in hobbies %}
+
+    <label class="chip hobby-chip">
+
+    <input
+
+    type="checkbox"
+
+    name="hobbies"
+
+    value="{{ hobby.id }}"
+
+    id="hobby{{ hobby.id }}"
+
+    {% if hobby in profile.hobbies.all %}checked{% endif %}>
+
+    <span>
+
+    {{ hobby.name }}
+
+    </span>
+
+    </label>
+
+    {% endfor %}
+
+    </div>
+
+    <hr>
+
+    <div class="input-group mt-4">
+
+    <input
+
+    type="text"
+
+    name="new_hobby"
+
+    class="form-control"
+
+    placeholder="Add Hobby">
+
+    <span class="input-group-text bg-danger text-white">
+
+    <i class="bi bi-plus-lg"></i>
+
+    </span>
+
+    </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= INTERESTS ================= -->
+
+<div class="card border-0 shadow-lg mb-4">
+
+        <div class="card-header bg-white py-3">
+
+        <h4 class="fw-bold">
+
+        <i class="bi bi-stars text-success me-2"></i>
+
+        Interests
+
+        </h4>
+
+        </div>
+
+                <div class="card-body">
+
+        <div class="chip-container">
+
+        {% for interest in interests %}
+
+        <label class="chip interest-chip">
+
+        <input
+
+        type="checkbox"
+
+        name="interests"
+
+        value="{{ interest.id }}"
+
+        id="interest{{ interest.id }}"
+
+        {% if interest in profile.interests.all %}checked{% endif %}>
+
+        <span>
+
+        {{ interest.name }}
+
+        </span>
+
+        </label>
+
+        {% endfor %}
+
+        </div>
+
+        <hr>
+
+        <div class="input-group mt-4">
+
+        <input
+
+        type="text"
+
+        name="new_interest"
+
+        class="form-control"
+
+        placeholder="Add Interest">
+
+        <span class="input-group-text bg-success text-white">
+
+        <i class="bi bi-plus-lg"></i>
+
+        </span>
+
+        </div>
+
+        </div>
+
+</div>
+
+
+<!-- ================= Preferred Job Roles ================= -->
+
+<div class="card border-0 shadow-lg mb-4">
+
+    <div class="card-header bg-white py-3">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <div>
+
+                <h4 class="fw-bold mb-1">
+
+                    <i class="bi bi-briefcase-fill text-primary me-2"></i>
+
+                    Preferred Job Roles
+
+                </h4>
+
+                <small class="text-muted">
+
+                    Select roles you are looking for
+
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="chip-container">
+
+            {% for position in job_positions %}
+
+            <label class="chip role-chip">
+
+                <input
+
+                    type="checkbox"
+
+                    name="job_positions"
+
+                    value="{{ position.id }}"
+
+                    id="position{{ position.id }}"
+
+                    {% if position in profile.job_positions.all %}checked{% endif %}>
+
+                <span>
+
+                    {{ position.name }}
+
+                </span>
+
+            </label>
+
+            {% endfor %}
+
+        </div>
+
+        <hr>
+
+        <div class="input-group mt-4">
+
+            <input
+
+                type="text"
+
+                class="form-control"
+
+                name="new_position"
+
+                placeholder="Example : Python Developer">
+
+            <span class="input-group-text bg-primary text-white">
+
+                <i class="bi bi-plus-lg"></i>
+
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= Preferred Job Locations ================= -->
+
+<div class="card border-0 shadow-lg mb-4">
+
+    <div class="card-header bg-white py-3">
+
+        <h4 class="fw-bold">
+
+            <i class="bi bi-geo-alt-fill text-danger me-2"></i>
+
+            Preferred Locations
+
+        </h4>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="chip-container">
+
+            {% for city in job_locations %}
+
+            <label class="chip location-chip">
+
+                <input
+
+                    type="checkbox"
+
+                    name="job_locations"
+
+                    value="{{ city.id }}"
+
+                    id="location{{ city.id }}"
+
+                    {% if city in profile.job_locations.all %}checked{% endif %}>
+
+                <span>
+
+                    {{ city.city }}
+
+                </span>
+
+            </label>
+
+            {% endfor %}
+
+        </div>
+
+        <hr>
+
+        <div class="input-group mt-4">
+
+            <input
+
+                type="text"
+
+                class="form-control"
+
+                name="new_location"
+
+                placeholder="Example : Pune">
+
+            <span class="input-group-text bg-danger text-white">
+
+                <i class="bi bi-plus-lg"></i>
+
+            </span>
+
+        </div>
+
+    </div>
+
+    </div>
+
+
+
+        <div class="save-bar shadow-lg">
+
+            <a href="{% url 'profile' %}"
+
+            class="btn btn-light btn-lg px-4">
+
+                Cancel
+
+            </a>
+
+            <button
+
+                type="submit"
+
+                class="btn btn-primary btn-lg px-5">
+
+                <i class="bi bi-check-circle-fill me-2"></i>
+
+                Save Changes
+
+            </button>
+
+
+        </div>
+
+        </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<!-- ================= Add Education Modal ================= -->
+
+<div
+    class="modal fade"
+    id="educationModal"
+    tabindex="-1">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+    <div class="modal-content border-0 shadow">
+
+    <form
+    method="POST"
+    action="{% url 'add_education' %}">
+
+    {% csrf_token %}
+
+    {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-warning">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- Header -->
+
+    <div class="modal-header border-0 pb-0">
+
+    <div>
+
+    <h3 class="fw-bold mb-1">
+
+    Add Education
+
+    </h3>
+
+    <p class="text-muted mb-0">
+
+    Enter your academic qualification.
+
+    </p>
+
+    </div>
+
+    <button
+    type="button"
+    class="btn-close"
+    data-bs-dismiss="modal">
+
+    </button>
+
+    </div>
+
+    <!-- Body -->
+
+    <div class="modal-body">
+
+    <div class="row">
+
+    <!-- Education -->
+
+    <div class="col-md-6 mb-3">
+
+    <label class="form-label">
+
+    Education Level
+
+    </label>
+
+    <select
+    name="education_type"
+    class="form-select"
+    required>
+
+    <option value="">
+
+    Select
+
+    </option>
+
+    <option value="10TH">
+
+    10th
+
+    </option>
+
+    <option value="12TH">
+
+    12th
+
+    </option>
+
+    <option value="GRADUATION">
+
+    Graduation
+
+    </option>
+
+    <option value="POST_GRADUATION">
+
+    Post Graduation
+
+    </option>
+
+    <option value="OTHER">
+
+    Other
+
+    </option>
+
+    </select>
+
+    </div>
+
+    <!-- Passing -->
+
+    <div class="col-md-6 mb-3">
+
+    <label class="form-label">
+
+    Passing Year
+
+    </label>
+
+    <input
+    type="number"
+    name="passing_year"
+    class="form-control"
+    required>
+
+    </div>
+
+    <!-- Institute -->
+
+    <div class="col-md-12 mb-3">
+
+    <label class="form-label">
+
+    Institution Name
+
+    </label>
+
+    <input
+    type="text"
+    name="institution_name"
+    class="form-control"
+    required>
+
+    </div>
+
+    <!-- Board -->
+
+    <div class="col-md-6 mb-3">
+
+    <label class="form-label">
+
+    Board / University
+
+    </label>
+
+    <input
+    type="text"
+    name="board_or_university"
+    class="form-control"
+    required>
+
+    </div>
+
+    <!-- Course -->
+
+    <div class="col-md-6 mb-3">
+
+    <label class="form-label">
+
+    Course
+
+    </label>
+
+    <input
+    type="text"
+    name="course_name"
+    class="form-control">
+
+    </div>
+
+    <!-- Specialization -->
+
+    <div class="col-md-6 mb-3">
+
+    <label class="form-label">
+
+    Specialization
+
+    </label>
+
+    <input
+    type="text"
+    name="specialization"
+    class="form-control">
+
+    </div>
+
+    <!-- Percentage -->
+
+    <div class="col-md-3 mb-3">
+
+    <label class="form-label">
+
+    Percentage
+
+    </label>
+
+    <input
+    type="number"
+    step="0.01"
+    name="percentage"
+    class="form-control">
+
+    </div>
+
+    <!-- CGPA -->
+
+    <div class="col-md-3 mb-3">
+
+    <label class="form-label">
+
+    CGPA
+
+    </label>
+
+    <input
+    type="number"
+    step="0.01"
+    name="cgpa"
+    class="form-control">
+
+    </div>
+
+    </div>
+
+</div>
+
+<!-- Footer -->
+
+<div class="modal-footer border-0">
+
+        <button
+            type="button"
+            class="btn btn-light"
+            data-bs-dismiss="modal">
+
+            Cancel
+
+        </button>
+
+        <button
+        type="submit"
+        class="btn btn-primary">
+
+        Save Education
+
+        </button>
+
+        </div>
+
+    </form>
+
+    </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= Edit Education Modal ================= -->
+
+<div class="modal fade"
+    id="editEducationModal"
+    tabindex="-1">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <form
+                id="editEducationForm"
+                method="POST"
+                action="">
+
+                {% csrf_token %}
+
+                <div class="modal-header">
+
+                    <h4 class="fw-bold">
+
+                    Edit Education
+
+                    </h4>
+
+                    <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+
+                    </button>
+
+                    </div>
+
+                    <div class="modal-body">
+
+                    <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                    <label>Education Level</label>
+
+                    <select
+                    name="education_type"
+                    class="form-select"
+                    required>
+
+                    <option value="10TH"
+                    {% if education.education_type == "10TH" %}selected{% endif %}>
+
+                    10th
+
+                    </option>
+
+                    <option value="12TH"
+                    {% if education.education_type == "12TH" %}selected{% endif %}>
+
+                    12th
+
+                    </option>
+
+                    <option value="GRADUATION"
+                    {% if education.education_type == "GRADUATION" %}selected{% endif %}>
+
+                    Graduation
+
+                    </option>
+
+                    <option value="POST_GRADUATION"
+                    {% if education.education_type == "POST_GRADUATION" %}selected{% endif %}>
+
+                    Post Graduation
+
+                    </option>
+
+                    <option value="OTHER"
+                    {% if education.education_type == "OTHER" %}selected{% endif %}>
+
+                    Other
+
+                    </option>
+
+                    </select>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                    <label>Passing Year</label>
+
+                    <input
+                    type="number"
+                    name="passing_year"
+                    class="form-control"
+                    value="{{ education.passing_year }}"
+                    required>
+
+                    </div>
+
+                    <div class="col-md-12 mb-3">
+
+                    <label>Institution Name</label>
+
+                    <input
+                    type="text"
+                    name="institution_name"
+                    class="form-control"
+                    value="{{ education.institution_name }}"
+                    required>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                    <label>Board / University</label>
+
+                    <input
+                    type="text"
+                    name="board_or_university"
+                    class="form-control"
+                    value="{{ education.board_or_university }}"
+                    required>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                    <label>Course</label>
+
+                    <input
+                    type="text"
+                    name="course_name"
+                    class="form-control"
+                    value="{{ education.course_name }}">
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                    <label>Specialization</label>
+
+                    <input
+                    type="text"
+                    name="specialization"
+                    class="form-control"
+                    value="{{ education.specialization }}">
+
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+
+                    <label>Percentage</label>
+
+                    <input
+                    type="number"
+                    step="0.01"
+                    name="percentage"
+                    class="form-control"
+                    value="{{ education.percentage }}">
+
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+
+                    <label>CGPA</label>
+
+                    <input
+                    type="number"
+                    step="0.01"
+                    name="cgpa"
+                    class="form-control"
+                    value="{{ education.cgpa }}">
+
+                    </div>
+
+                    </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+
+                    <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Cancel
+
+                    </button>
+
+                    <button
+                    type="submit"
+                    class="btn btn-primary">
+
+                    Update Education
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================== Add Project ============ -->
+<div class="modal fade"
+     id="addProjectModal"
+     tabindex="-1">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <form
+                method="POST"
+                action="{% url 'add_project' %}">
+
+                {% csrf_token %}
+
+                <div class="modal-header">
+
+                    <h4 class="fw-bold">
+
+                        Add Project
+
+                    </h4>
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label>Project Title</label>
+
+                            <input
+                                type="text"
+                                name="project_title"
+                                class="form-control"
+                                required>
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label>Role</label>
+
+                            <input
+                                type="text"
+                                name="role"
+                                class="form-control">
+
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+
+                            <label>Description</label>
+
+                            <textarea
+                                name="project_description"
+                                rows="4"
+                                class="form-control"
+                                required></textarea>
+
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+
+                            <label>Technologies Used</label>
+
+                            <input
+                                type="text"
+                                name="technologies_used"
+                                class="form-control">
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label>GitHub URL</label>
+
+                            <input
+                                type="url"
+                                name="github_url"
+                                class="form-control">
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label>Live URL</label>
+
+                            <input
+                                type="url"
+                                name="live_url"
+                                class="form-control">
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label>Start Date</label>
+
+                            <input
+                                type="date"
+                                name="start_date"
+                                class="form-control"
+                                required>
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label>End Date</label>
+
+                            <input
+                                type="date"
+                                name="end_date"
+                                class="form-control">
+
+                        </div>
+
+                        <div class="col-md-12">
+
+                            <div class="form-check">
+
+                                <input
+                                    type="checkbox"
+                                    name="currently_working"
+                                    class="form-check-input"
+                                    id="currentlyWorking">
+
+                                <label
+                                    class="form-check-label"
+                                    for="currentlyWorking">
+
+                                    Currently Working
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+
+                        Cancel
+
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        Save Project
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= Edit Project Modal ================= -->
+<div class="modal fade"
+     id="editProjectModal"
+     tabindex="-1">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <form
+                id="editProjectForm"
+                method="POST"
+                action="">
+
+                {% csrf_token %}
+
+                <div class="modal-header">
+
+                    <h4 class="fw-bold">
+
+                        Edit Project
+
+                    </h4>
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label>Project Title</label>
+
+                            <input
+                                type="text"
+                                name="project_title"
+                                id="edit_project_title"
+                                class="form-control"
+                                value="{{ project.project_title }}"
+                                required>
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label>Role</label>
+
+                            <input
+                                type="text"
+                                name="role"
+                                id="edit_role"
+                                class="form-control"
+                                value="{{ project.role }}"
+                                >
+
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+
+                            <label>Description</label>
+
+                            <input
+                                name="project_description"
+                                id="edit_project_description"
+                                rows="4"
+                                type="text"
+                                value="{{ project.project_description }}"
+                                class="form-control"></input>
+
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+
+                            <label>Technologies Used</label>
+
+                            <input
+                                type="text"
+                                name="technologies_used"
+                                id="edit_technologies"
+                                class="form-control"
+                                value="{{ project.technologies_used }}">
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label>GitHub URL</label>
+
+                            <input
+                                type="url"
+                                name="github_url"
+                                id="edit_github"
+                                value="{{ project.github_url }}"
+                                class="form-control">
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label>Live URL</label>
+
+                            <input
+                                type="url"
+                                name="live_url"
+                                id="edit_live"
+                                value="{{ project.live_url }}"
+                                class="form-control">
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label>Start Date</label>
+
+                            <input
+                                type="date"
+                                name="start_date"
+                                id="edit_start"
+                                value="{{ project.start_date }}"
+                                class="form-control">
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label>End Date</label>
+
+                            <input
+                                type="date"
+                                name="end_date"
+                                id="edit_end"
+                                value="{{ project.end_date }}"
+                                class="form-control">
+
+                        </div>
+
+                        <div class="col-md-12">
+
+                            <div class="form-check">
+
+                                <input
+                                    type="checkbox"
+                                    id="edit_currently_working"
+                                    name="currently_working"
+                                    class="form-check-input">
+
+                                <label class="form-check-label">
+
+                                    Currently Working
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+
+                        Cancel
+
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        Update Project
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

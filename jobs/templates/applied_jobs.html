@@ -1,0 +1,51 @@
+{% extends 'home.html' %}
+
+{% block content %}
+  <div class="container py-4">
+    <h3 class="mb-4">My Applications</h3>
+
+    <div class="card shadow-sm">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Job</th>
+
+              <th>Company</th>
+
+              <th>Applied On</th>
+
+              <th>Status</th>
+
+              <th></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for application in applications %}
+              <tr>
+                <td>{{ application.job.job_title }}</td>
+
+                <td>{{ application.job.company.company_name }}</td>
+
+                <td>{{ application.applied_at|date:'d M Y' }}</td>
+
+                <td>
+                  <span class="badge bg-primary">{{ application.get_stage_display }}</span>
+                </td>
+
+                <td>
+                  <a href="{% url 'job_detail' application.job.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="5" class="text-center">No applications yet.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

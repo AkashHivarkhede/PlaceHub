@@ -1,0 +1,220 @@
+{% extends 'home.html' %}
+
+{% block content %}
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-5 col-md-7">
+        <div class="card border-0 shadow-lg rounded-4">
+          <div class="card-body p-5">
+            <div class="text-center">
+              <div class="mb-3">
+                <i class="bi bi-shield-lock-fill text-primary" style="font-size: 60px;"></i>
+              </div>
+
+              <h2 class="fw-bold mt-3">Verify OTP</h2>
+
+              <p class="text-muted">Enter the 6 digit verification code sent to your email.</p>
+            </div>
+
+            {% if messages %}
+              {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                  {{ message }}
+
+                  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+              {% endfor %}
+            {% endif %}
+
+            <!-- Forgot Password OTP Form -->
+
+            <form method="POST" action="{% url 'verify_otp' %}" id="otpForm">
+              {% csrf_token %}
+
+              <input type="hidden" name="otp" id="otp" />
+
+              <div class="otp-wrapper">
+                <input type="text" maxlength="1" class="otp-input" inputmode="numeric" />
+
+                <input type="text" maxlength="1" class="otp-input" inputmode="numeric" />
+
+                <input type="text" maxlength="1" class="otp-input" inputmode="numeric" />
+
+                <input type="text" maxlength="1" class="otp-input" inputmode="numeric" />
+
+                <input type="text" maxlength="1" class="otp-input" inputmode="numeric" />
+
+                <input type="text" maxlength="1" class="otp-input" inputmode="numeric" />
+              </div>
+
+              <button type="submit" class="btn btn-primary w-100 py-3 mt-4 rounded-pill fw-semibold">Verify OTP</button>
+            </form>
+
+            <div class="text-center mt-4">
+              <span class="text-muted">Didn't receive the OTP?</span>
+
+              <br />
+
+              <span id="timer" class="fw-bold text-primary">60s</span>
+
+              <br />
+
+              <!-- IMPORTANT: Forgot Password resend -->
+
+              <a href="{% url 'resend_otp' %}" id="resendBtn" class="btn btn-link text-decoration-none disabled">Resend OTP</a>
+            </div>
+
+            <div class="text-center mt-3">
+              <a href="{% url 'login' %}" class="text-decoration-none">
+                <i class="bi bi-arrow-left"></i>
+
+                Back to Login
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .otp-wrapper {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 30px;
+    }
+    
+    .otp-input {
+      width: 55px;
+      height: 60px;
+    
+      border: 2px solid #dee2e6;
+      border-radius: 12px;
+    
+      text-align: center;
+    
+      font-size: 25px;
+      font-weight: bold;
+    
+      outline: none;
+    
+      transition: 0.2s;
+    }
+    
+    .otp-input:focus {
+      border-color: #0d6efd;
+    
+      box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+    }
+    
+    @media (max-width: 576px) {
+      .otp-wrapper {
+        gap: 5px;
+      }
+    
+      .otp-input {
+        width: 42px;
+        height: 50px;
+    
+        font-size: 20px;
+      }
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('otpForm')
+    
+      const inputs = document.querySelectorAll('.otp-input')
+    
+      const hiddenOtp = document.getElementById('otp')
+    
+      /*
+            ------------------------------------
+            Move to next input
+            ------------------------------------
+            */
+    
+      inputs.forEach(function (input, index) {
+        input.addEventListener('input', function () {
+          this.value = this.value.replace(/\D/g, '')
+    
+          if (this.value && index < inputs.length - 1) {
+            inputs[index + 1].focus()
+          }
+        })
+    
+        /*
+                    ------------------------------------
+                    Backspace
+                    ------------------------------------
+                    */
+    
+        input.addEventListener('keydown', function (event) {
+          if (event.key === 'Backspace' && !this.value && index > 0) {
+            inputs[index - 1].focus()
+          }
+        })
+      })
+    
+      /*
+            ------------------------------------
+            Before submitting form
+            ------------------------------------
+            */
+    
+      form.addEventListener('submit', function (event) {
+        const otp = Array.from(inputs)
+          .map(function (input) {
+            return input.value
+          })
+          .join('')
+    
+        console.log('OTP BEFORE SUBMIT:', otp)
+    
+        if (otp.length !== 6) {
+          event.preventDefault()
+    
+          alert('Please enter the complete 6 digit OTP.')
+    
+          return
+        }
+    
+        /*
+                    Put OTP into hidden field
+                    */
+    
+        hiddenOtp.value = otp
+    
+        console.log('HIDDEN OTP:', hiddenOtp.value)
+      })
+    
+      /*
+            ------------------------------------
+            Resend OTP Timer
+            ------------------------------------
+            */
+    
+      let time = 60
+    
+      const timer = document.getElementById('timer')
+    
+      const resendBtn = document.getElementById('resendBtn')
+    
+      const interval = setInterval(function () {
+        time--
+    
+        timer.innerText = time + 's'
+    
+        if (time <= 0) {
+          clearInterval(interval)
+    
+          timer.innerText = 'You can resend now'
+    
+          resendBtn.classList.remove('disabled')
+        }
+      }, 1000)
+    })
+  </script>
+{% endblock %}

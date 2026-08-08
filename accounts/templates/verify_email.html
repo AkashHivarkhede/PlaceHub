@@ -1,0 +1,195 @@
+{% extends 'home.html' %}
+
+{% block content %}
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-xl-5 col-lg-6 col-md-8">
+        <div class="card border-0 shadow-lg rounded-4 otp-card">
+          <div class="card-body p-5">
+            <div class="text-center">
+              <div class="otp-icon">
+                <i class="bi bi-envelope-check-fill"></i>
+              </div>
+
+              <h2 class="fw-bold mt-4">Verify Your Email</h2>
+
+              <p class="text-muted">Enter the 6-digit OTP sent to your email address.</p>
+            </div>
+
+            {% if messages %}
+              {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                  {{ message }}
+
+                  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+              {% endfor %}
+            {% endif %}
+
+            <form method="POST" action="{% url 'verify_email' %}" id="otpForm">
+              {% csrf_token %}
+
+              <div class="otp-wrapper">
+                <input type="text" name="otp1" maxlength="1" class="otp-input" inputmode="numeric" />
+
+                <input type="text" name="otp2" maxlength="1" class="otp-input" inputmode="numeric" />
+
+                <input type="text" name="otp3" maxlength="1" class="otp-input" inputmode="numeric" />
+
+                <input type="text" name="otp4" maxlength="1" class="otp-input" inputmode="numeric" />
+
+                <input type="text" name="otp5" maxlength="1" class="otp-input" inputmode="numeric" />
+
+                <input type="text" name="otp6" maxlength="1" class="otp-input" inputmode="numeric" />
+              </div>
+
+              <button type="submit" class="btn btn-primary w-100 py-3 mt-4 rounded-pill">Verify Email</button>
+            </form>
+
+            <div class="text-center mt-4">
+              <span class="text-muted">Didn't receive the OTP?</span>
+
+              <br />
+
+              <span id="timer" class="fw-bold text-primary">60s</span>
+
+              <br />
+
+              <a href="{% url 'resend_verification_otp' %}" id="resendBtn" class="btn btn-link text-decoration-none disabled">Resend OTP</a>
+            </div>
+
+            <div class="text-center mt-3">
+              <a href="{% url 'login' %}" class="text-decoration-none">
+                <i class="bi bi-arrow-left"></i>
+
+                Back to Login
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .otp-card {
+      border-radius: 25px;
+    }
+    
+    .otp-icon {
+      width: 90px;
+      height: 90px;
+      background: #0d6efd;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: auto;
+      font-size: 40px;
+    }
+    
+    .otp-wrapper {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 30px;
+    }
+    
+    .otp-input {
+      width: 60px;
+      height: 65px;
+      border: 2px solid #dee2e6;
+      border-radius: 15px;
+      text-align: center;
+      font-size: 28px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    
+    .otp-input:focus {
+      border-color: #0d6efd;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+      outline: none;
+    }
+    
+    @media (max-width: 576px) {
+      .otp-input {
+        width: 45px;
+        height: 55px;
+        font-size: 22px;
+      }
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('otpForm')
+    
+      const inputs = document.querySelectorAll('.otp-input')
+    
+      const hiddenOtp = document.getElementById('otp')
+    
+      // Move to next box when typing
+      inputs.forEach(function (input, index) {
+        input.addEventListener('input', function () {
+          // Allow numbers only
+          this.value = this.value.replace(/\D/g, '')
+    
+          if (this.value && index < inputs.length - 1) {
+            inputs[index + 1].focus()
+          }
+        })
+    
+        // Backspace → previous box
+        input.addEventListener('keydown', function (event) {
+          if (event.key === 'Backspace' && !this.value && index > 0) {
+            inputs[index - 1].focus()
+          }
+        })
+      })
+    
+      // IMPORTANT:
+      // Before submitting the form,
+      // copy all 6 boxes into hidden input.
+    
+      form.addEventListener('submit', function (event) {
+        const otp = Array.from(inputs)
+          .map(function (input) {
+            return input.value
+          })
+          .join('')
+    
+        console.log('OTP BEFORE SUBMIT:', otp)
+    
+        hiddenOtp.value = otp
+    
+        if (otp.length !== 6) {
+          event.preventDefault()
+    
+          alert('Please enter the complete 6 digit OTP.')
+    
+          return false
+        }
+      })
+    
+      const inputs = document.querySelectorAll('.otp-input')
+    
+      inputs.forEach((input, index) => {
+        input.addEventListener('input', function () {
+          this.value = this.value.replace(/\D/g, '')
+    
+          if (this.value && index < inputs.length - 1) {
+            inputs[index + 1].focus()
+          }
+        })
+    
+        input.addEventListener('keydown', function (event) {
+          if (event.key === 'Backspace' && !this.value && index > 0) {
+            inputs[index - 1].focus()
+          }
+        })
+      })
+    })
+  </script>
+{% endblock %}

@@ -1,0 +1,834 @@
+{% extends 'home.html' %}
+
+
+{% block content %}
+
+
+  <div class="container-fluid">
+
+     <div class="row">
+
+<!-- Sidebar -->
+<div class="col-lg-2 col-md-3 p-0">
+  
+
+    <aside class="sidebar shadow">
+
+        <!-- User -->
+
+        <div class="sidebar-profile">
+
+            <img
+                src="https://ui-avatars.com/api/?name={{ request.user.first_name }}+{{ request.user.last_name }}&background=2563EB&color=fff&size=128"
+                class="rounded-circle shadow">
+
+            <h5 class="mt-3 mb-1">
+
+                {{ request.user.first_name }}
+
+                {{ request.user.last_name }}
+
+            </h5>
+
+            <small>
+
+                Student
+
+            </small>
+
+        </div>
+
+        <hr class="m-0">
+
+        <!-- Menu -->
+
+        <div class="py-3">
+
+            <a href="{% url 'student_dashboard' %}" class="sidebar-link active">
+
+                <i class="bi bi-grid-fill"></i>
+
+                Dashboard
+
+            </a>
+
+            <a href="{% url 'profile' %}" class="sidebar-link">
+
+                <i class="bi bi-person-circle"></i>
+
+                My Profile
+
+            </a>
+
+            <a href="{% url 'edit_profile' %}" class="sidebar-link">
+
+                <i class="bi bi-pencil-square"></i>
+
+                Edit Profile
+
+            </a>
+
+            <a href="{% url 'job_list' %}" class="sidebar-link">
+
+                <i class="bi bi-briefcase-fill"></i>
+
+                Jobs
+
+            </a>
+
+            <a href="{% url 'applied_jobs' %}" class="sidebar-link">
+
+                <i class="bi bi-file-earmark-check-fill"></i>
+
+                Applications
+
+            </a>
+
+            <a href="#" class="sidebar-link d-flex justify-content-between">
+
+                <span>
+
+                    <i class="bi bi-bell-fill"></i>
+
+                    Notifications
+
+                </span>
+
+                {% if notifications %}
+
+                <span class="badge bg-danger rounded-pill">
+
+                    {{ notifications|length }}
+
+                </span>
+
+                {% endif %}
+
+            </a>
+
+        </div>
+
+        <div class="mt-auto p-3">
+
+            <a href="{% url 'logout' %}" class="btn btn-danger w-100 rounded-pill">
+
+                <i class="bi bi-box-arrow-right me-2"></i>
+
+                Logout
+
+            </a>
+
+        </div>
+
+    </aside>
+
+</div>
+
+
+
+<!-- Dashboard -->
+
+<div class="col-lg-10 col-md-9 bg-light">
+
+<div class="container py-4">
+
+<!-- Welcome Card -->
+
+<div class="card border-0 shadow-lg mb-4">
+
+<div class="card-body">
+
+<div class="row align-items-center">
+
+<div class="col-lg-8">
+
+<h2 class="fw-bold">
+
+Welcome Back,
+
+<span class="text-primary">
+
+{{ request.user.first_name }}
+
+</span>
+
+
+
+</h2>
+
+<p class="text-muted">
+
+Manage your profile and explore new opportunities.
+
+</p>
+
+<div class="mt-3">
+
+<a
+
+href="{% url 'profile' %}"
+
+class="btn btn-primary">
+
+View Profile
+
+</a>
+
+<a
+
+href="{% url 'job_list' %}"
+
+class="btn btn-outline-primary">
+
+Browse Jobs
+
+</a>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<h6>
+
+Profile Completion
+
+</h6>
+
+<div class="progress" style="height:12px">
+
+<div
+
+class="progress-bar bg-success"
+
+style="width:75%">
+
+75%
+
+</div>
+
+</div>
+
+<p class="small text-muted mt-2">
+
+Complete your profile to improve job recommendations.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- Statistics -->
+
+<div class="row g-4 mb-4">
+
+<div class="col-lg-3 col-md-6">
+
+<div class="card stat-card border-0 shadow-sm">
+
+<div class="card-body">
+
+<div class="d-flex justify-content-between">
+
+<div>
+
+<h6>
+
+Jobs
+
+</h6>
+
+<h2>
+
+{{ total_jobs }}
+
+</h2>
+
+</div>
+
+<i class="bi bi-briefcase-fill text-primary display-5"></i>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-3 col-md-6">
+
+<div class="card stat-card border-0 shadow-sm">
+
+<div class="card-body">
+
+<div class="d-flex justify-content-between">
+
+<div>
+
+<h6>
+
+Applied
+
+</h6>
+
+<h2>
+
+{{ applied_jobs }}
+
+</h2>
+
+</div>
+
+<i class="bi bi-send-check-fill text-success display-5"></i>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-3 col-md-6">
+
+<div class="card stat-card border-0 shadow-sm">
+
+<div class="card-body">
+
+<div class="d-flex justify-content-between">
+
+<div>
+
+<h6>
+
+Shortlisted
+
+</h6>
+
+<h2>
+
+{{ shortlisted }}
+
+</h2>
+
+</div>
+
+<i class="bi bi-star-fill text-warning display-5"></i>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-3 col-md-6">
+
+<div class="card stat-card border-0 shadow-sm">
+
+<div class="card-body">
+
+<div class="d-flex justify-content-between">
+
+<div>
+
+<h6>
+
+Selected
+
+</h6>
+
+<h2>
+
+{{ selected }}
+
+</h2>
+
+</div>
+
+<i class="bi bi-award-fill text-danger display-5"></i>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ================= Latest Jobs ================= -->
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+
+    <h4 class="fw-bold">
+
+        Recommended Jobs
+
+    </h4>
+
+    <a href="{% url 'job_list' %}"
+
+       class="btn btn-primary">
+
+        View All
+
+    </a>
+
+</div>
+
+<div class="row">
+
+{% for job in latest_jobs %}
+
+<div class="col-lg-6 mb-4">
+
+<div class="card border-0 shadow-sm job-card h-100">
+
+<div class="card-body">
+
+<div class="d-flex justify-content-between">
+
+<div>
+
+<h5 class="fw-bold">
+
+{{ job.job_title }}
+
+</h5>
+
+<h6 class="text-primary">
+
+{{ job.company.company_name }}
+
+</h6>
+
+</div>
+  
+    <div>
+  
+        <span class="badge bg-success"> {{ job.employment_type }} </span>
+
+    </div>
+
+</div>
+
+<div class="mt-3">
+
+<span class="badge bg-light text-dark border me-2">
+
+<i class="bi bi-geo-alt-fill"></i>
+
+{{ job.location }}
+
+</span>
+
+<span class="badge bg-light text-dark border me-2">
+
+<i class="bi bi-cash-stack"></i>
+
+₹ {{ job.salary_package }}
+
+</span>
+
+<span class="badge bg-light text-dark border">
+
+<i class="bi bi-clock-fill"></i>
+
+{{ job.experience }} Years
+
+</span>
+
+</div>
+
+<p class="text-muted mt-3">
+
+{{ job.job_description|truncatewords:20 }}
+
+</p>
+
+<div class="mb-3">
+
+{% for skill in job.required_skills.all %}
+
+<span class="badge bg-primary me-1 mb-1">
+
+{{ skill.name }}
+
+</span>
+
+{% empty %}
+
+<span class="badge bg-secondary">
+
+No Skills
+
+</span>
+
+{% endfor %}
+
+</div>
+
+<div class="d-flex justify-content-between align-items-center">
+
+<small class="text-muted">
+
+Posted {{ job.posted_at }}
+
+</small>
+
+<div>
+
+
+                  {% if user.is_authenticated %}
+                    {% if job.id in appliedJobs %}
+                      <a class="btn btn-success btn-sm" disabled>
+                        <i class="bi bi-check-circle-fill me-1"></i>
+                        Applied
+                      </a>
+                    {% else %}
+                      <a href="{% url 'job_detail' job.id %}" class="btn btn-primary btn-sm">Apply</a>
+                    {% endif %}
+                  {% else %}
+                    <a href="{% url 'login' %}?next={% url 'apply_job' job.id %}" class="btn btn-primary">Apply Now</a>
+                  {% endif %}
+               
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% empty %}
+
+<div class="col-12">
+
+<div class="alert alert-info shadow-sm">
+
+No Jobs Available
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+
+<!-- ================= Applications ================= -->
+
+<div class="d-flex justify-content-between align-items-center mt-5 mb-3">
+
+    <h4 class="fw-bold">
+
+        My Applications
+
+    </h4>
+
+    <a href="{% url 'applied_jobs' %}"
+
+       class="btn btn-outline-primary">
+
+        View All
+
+    </a>
+
+</div>
+
+<div class="card border-0 shadow-sm">
+
+<div class="table-responsive">
+
+<table class="table table-hover align-middle mb-0">
+
+<thead class="table-light">
+
+<tr>
+
+<th>Company</th>
+
+<th>Job</th>
+
+<th>Status</th>
+
+<th>Applied</th>
+
+<th></th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for application in applications %}
+
+<tr>
+
+<td>
+
+<div class="d-flex align-items-center">
+
+<img
+
+src="https://ui-avatars.com/api/?name={{ application.job.company.company_name }}&background=0D6EFD&color=fff"
+
+class="rounded-circle me-3"
+
+width="45">
+
+<div>
+
+<strong>
+
+{{ application.job.company.company_name }}
+
+</strong>
+
+<br>
+
+<small class="text-muted">
+
+{{ application.job.location }}
+
+</small>
+
+</div>
+
+</div>
+
+</td>
+
+<td>
+
+<strong>
+
+{{ application.job.job_title }}
+
+</strong>
+
+</td>
+
+<td>
+
+{% if application.stage == 'APPLIED' %}
+
+<span class="badge bg-warning">
+
+Applied
+
+</span>
+
+{% elif application.stage == 'SHORTLISTED' %}
+
+<span class="badge bg-primary">
+
+Shortlisted
+
+</span>
+
+{% elif application.stage == 'INTERVIEW' %}
+
+<span class="badge bg-info">
+
+Interview
+
+</span>
+
+{% elif application.stage == 'SELECTED' %}
+
+<span class="badge bg-success">
+
+Selected
+
+</span>
+
+{% elif application.stage == 'REJECTED' %}
+
+<span class="badge bg-danger">
+
+Rejected
+
+</span>
+
+{% else %}
+
+<span class="badge bg-secondary">
+
+{{ application.get_stage_display }}
+
+</span>
+
+{% endif %}
+
+</td>
+
+<td>
+
+{{ application.applied_at|date:"d M Y" }}
+
+</td>
+
+<td>
+
+<a
+
+href="{% url 'job_detail' application.job.id %}"
+
+class="btn btn-sm btn-outline-primary">
+
+Details
+
+</a>
+
+</td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+
+<td colspan="5" class="text-center py-5">
+
+<img
+
+src="https://cdn-icons-png.flaticon.com/512/4076/4076478.png"
+
+width="90">
+
+<h5 class="mt-3">
+
+No Applications Yet
+
+</h5>
+
+<p class="text-muted">
+
+Start applying for jobs.
+
+</p>
+
+<a
+
+href="{% url 'job_list' %}"
+
+class="btn btn-primary">
+
+Browse Jobs
+
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+
+<!-- ================= Notifications ================= -->
+
+<div class="row mt-5">
+
+<div class="col-lg-12">
+
+<div class="card border-0 shadow-sm">
+
+<div class="card-header bg-white">
+
+<h5 class="mb-0">
+
+Recent Notifications
+
+</h5>
+
+</div>
+
+<div class="card-body">
+
+{% for notification in notifications %}
+
+<div class="d-flex mb-4">
+
+<div class="me-3">
+
+<span class="badge bg-primary rounded-circle p-3">
+
+<i class="bi bi-bell-fill"></i>
+
+</span>
+
+</div>
+
+<div>
+
+<strong>
+
+{{ notification.message }}
+
+</strong>
+
+<br>
+
+<small class="text-muted">
+
+{{ notification.created_at|timesince }} ago
+
+</small>
+
+</div>
+
+</div>
+
+{% empty %}
+
+<div class="text-center py-5">
+
+<i class="bi bi-bell-slash display-3 text-muted"></i>
+
+<h5 class="mt-3">
+
+No Notifications
+
+</h5>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+{% endblock  %}

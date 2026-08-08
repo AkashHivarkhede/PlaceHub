@@ -1,0 +1,1828 @@
+{% extends 'home.html' %}
+
+{% block content %}
+  
+<div class="container-fluid py-4">
+
+    <div class="row">
+
+        <!-- LEFT SIDEBAR -->
+
+        <div class="col-lg-3 mb-4">
+
+            {% comment %} <div class="card border-0 shadow-lg overflow-hidden sidebar-card"> {% endcomment %}
+            <div class="card border-0 shadow-lg overflow-hidden sidebar-card profile-sidebar">
+
+                <!-- Cover -->
+
+                <div style="height:120px;background:linear-gradient(135deg,#2563eb,#4f46e5);"></div>
+
+                <div class="card-body text-center mt-n5">
+
+                    {% if profile.profile_photo %}
+
+                            <img src="{{ profile.profile_photo.url }}"
+
+                            class="rounded-circle border border-4 border-white shadow"
+
+                            width="150"
+
+                            height="150"
+
+                            style="object-fit:cover;">
+
+                    {% else %}
+
+                    <img
+
+                        src="https://ui-avatars.com/api/?name={{ profile.first_name }}+{{ profile.last_name }}&size=180&background=2563eb&color=fff"
+
+                        class="rounded-circle border border-4 border-white shadow"
+
+                        width="150">
+
+                    {% endif %}
+
+                    <h3 class="mt-3 fw-bold">
+
+                        {{ profile.first_name }}
+
+                        {{ profile.last_name }}
+
+                    </h3>
+
+                    <p class="text-muted mb-1">
+
+                          Student
+
+                    </p>
+
+                    <p class="text-primary">
+
+                    <i class="bi bi-geo-alt-fill"></i>
+
+                    {{ profile.location|default:"Location not added" }}
+
+                    </p>
+
+                    <div class="d-grid gap-2 mt-4">
+
+                    <a
+
+                    href="{% url 'edit_profile' %}"
+
+                    class="btn btn-primary">
+
+                    <i class="bi bi-pencil-square"></i>
+
+                         Edit Profile
+
+                    </a>
+
+                    {% if profile.resume %}
+
+                    <a
+
+                    href="{{ profile.resume.url }}"
+
+                    class="btn btn-success"
+
+                    target="_blank">
+
+                    <i class="bi bi-file-earmark-pdf"></i>
+
+                         View Resume
+
+                    </a>
+
+                    {% endif %}
+
+                </div>
+
+                    <hr>
+
+                    <div class="row text-center">
+
+                    <div class="col-4">
+
+                    <h4>
+
+                    {{ applied_jobs }}
+
+                    </h4>
+
+                    <small>
+
+                         Applied
+
+                    </small>
+
+                    </div>
+
+                    <div class="col-4">
+
+                    <h4>
+
+                    {{ shortlisted }}
+
+                    </h4>
+
+                    <small>
+
+                         Shortlisted
+
+                    </small>
+
+                    </div>
+
+                    <div class="col-4">
+
+                    <h4>
+
+                    {{ selected }}
+
+                    </h4>
+
+                    <small>
+
+                        Selected
+
+                    </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Contact -->
+
+<div class="card border-0 shadow mt-4">
+
+    <div class="card-header bg-white">
+
+        <h5>
+
+        Contact Information
+
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        <p>
+
+            <i class="bi bi-envelope-fill text-primary"></i>
+
+            {{ request.user.email }}
+
+        </p>
+
+        <p>
+
+            <i class="bi bi-telephone-fill text-success"></i>
+
+            {{ profile.phone_number|default:"Not Added" }}
+
+         </p>
+
+        <p>
+
+            <i class="bi bi-geo-alt-fill text-danger"></i>
+
+            {{ profile.location|default:"Not Added" }}
+
+        </p>
+
+        {% if profile.github_url %}
+
+            <p>
+
+                <i class="bi bi-github"></i>
+
+                <a href="{{ profile.github_url }}" target="_blank">
+
+                GitHub
+
+                </a>
+
+            </p>
+
+        {% endif %}
+
+        {% if profile.linkedin_url %}
+
+            <p>
+
+                <i class="bi bi-linkedin text-primary"></i>
+
+                <a href="{{ profile.linkedin_url }}" target="_blank">
+
+                LinkedIn
+
+                </a>
+
+            </p>
+
+        {% endif %}
+
+    </div>
+
+    </div>
+
+    <div class="card border-0 shadow-lg mt-4">
+
+        <div class="card-header bg-white">
+
+            <h4>
+
+                <i class="bi bi-clock-history text-primary"></i>
+
+                Recent Activity
+
+            </h4>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="activity-item">
+
+            <i class="bi bi-check-circle-fill text-success"></i>
+
+            Applied Jobs
+
+            <span class="float-end fw-bold">
+
+             {{ applied_jobs }}
+
+           </span>
+
+        </div>
+
+        <hr>
+
+        <div class="activity-item">
+
+            <i class="bi bi-star-fill text-warning"></i>
+
+            Shortlisted
+
+            <span class="float-end fw-bold">
+
+            {{ shortlisted }}
+
+            </span>
+
+        </div>
+
+     <hr>
+
+        <div class="activity-item">
+
+            <i class="bi bi-award-fill text-danger"></i>
+
+            Selected
+
+                <span class="float-end fw-bold">
+
+                {{ selected }}
+
+                </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="card border-0 shadow-lg mt-4">
+
+    <div class="card-header bg-white">
+
+        <h4>
+
+            <i class="bi bi-file-earmark-pdf-fill text-danger"></i>
+
+            Resume
+
+        </h4>
+
+    </div>
+
+    <div class="card-body text-center">
+
+{% if profile.resume %}
+
+    <i class="bi bi-file-earmark-pdf display-1 text-danger"></i>
+
+        <h5 class="mt-3">
+
+             Resume Uploaded
+
+        </h5>
+
+        <a
+
+            href="{{ profile.resume.url }}"
+
+            target="_blank"
+
+            class="btn btn-success mt-3">
+
+            Download Resume
+
+        </a>
+
+{% else %}
+
+    <i class="bi bi-file-earmark-x display-1 text-secondary"></i>
+
+        <p class="mt-3">
+
+            No Resume Uploaded
+
+        </p>
+
+    <a
+
+        href="{% url 'edit_profile' %}"
+
+        class="btn btn-primary">
+
+        Upload Resume
+
+    </a>
+
+{% endif %}
+
+</div>
+
+</div>
+
+<div class="card border-0 shadow-lg mt-4">
+
+    <div class="card-header bg-white">
+
+        <h4>
+
+            <i class="bi bi-share-fill text-primary"></i>
+
+            Social Profiles
+
+        </h4>
+
+        </div>
+
+        <div class="card-body">
+
+                {% if profile.github_url %}
+
+                <a
+
+                    href="{{ profile.github_url }}"
+
+                    target="_blank"
+
+                    class="btn btn-dark w-100 mb-3">
+
+                    <i class="bi bi-github me-2"></i>
+
+                GitHub
+
+                </a>
+
+                {% endif %}
+
+                    {% if profile.linkedin_url %}
+
+                    <a
+
+                        href="{{ profile.linkedin_url }}"
+
+                        target="_blank"
+
+                        class="btn btn-primary w-100">
+
+                        <i class="bi bi-linkedin me-2"></i>
+
+                    LinkedIn
+
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+       </div>
+
+
+</div>
+
+<!-- RIGHT -->
+
+<div class="col-lg-9">
+
+    <!-- Personal Information -->
+
+    <div class="card border-0 shadow-lg mb-4">
+
+        <div class="card-header bg-white">
+
+            <h4 class="mb-0">
+
+            Personal Information
+
+            </h4>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="row">
+
+        <div class="col-md-6 mb-3">
+
+            <label class="text-muted">
+
+                First Name
+
+            </label>
+
+                <h6>
+
+                {{ profile.first_name }}
+
+            </h6>
+
+            </div>
+
+                <div class="col-md-6 mb-3">
+
+                    <label class="text-muted">
+
+                        Last Name
+
+                    </label>
+
+            <h6>
+
+                {{ profile.last_name }}
+
+            </h6>
+
+        </div>
+
+        <div class="col-md-6 mb-3">
+
+            <label class="text-muted">
+
+                Gender
+
+            </label>
+
+            <h6>
+
+                {{ profile.gender|default:"-" }}
+
+            </h6>
+
+        </div>
+
+    <div class="col-md-6 mb-3">
+
+        <label class="text-muted">
+
+            DOB
+
+            </label>
+
+            <h6>
+
+                {{ profile.date_of_birth|default:"-" }}
+
+            </h6>
+
+         </div>
+
+            <div class="col-md-6">
+
+                <label class="text-muted">
+
+                    Experience
+
+                </label>
+
+                <h6>
+
+                    {{ profile.experience }}
+
+                        Years
+
+                </h6>
+
+            </div>
+
+            <div class="col-md-6">
+
+                    <label class="text-muted">
+
+                        Location
+
+                    </label>
+
+                    <h6>
+
+                    {{ profile.location }}
+
+                    </h6>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= EDUCATION ================= -->
+
+<div class="card border-0 shadow-lg mb-4">
+
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+
+        <h4 class="mb-0">
+
+            <i class="bi bi-mortarboard-fill text-primary"></i>
+
+            Education
+
+        </h4>
+
+        <button type="button"
+            data-bs-toggle="modal"
+            data-bs-target="#educationModal"
+            class="btn btn-primary btn-sm">
+
+            <i class="bi bi-plus-circle"></i>
+
+            Add
+
+        </button>
+
+    </div>
+
+    <div class="card-body">
+
+        {% for edu in profile.educational_background.all %}
+
+        <div class="education-card mb-4">
+
+            <div class="row">
+
+                <div class="col-lg-9">
+
+                    <h5 class="fw-bold text-primary">
+
+                        {{ edu.course_name }}
+
+                    </h5>
+
+                    <h6>
+
+                        {{ edu.institution_name }}
+
+                    </h6>
+
+                    <p class="text-muted mb-2">
+
+                        {{ edu.board_or_university }}
+
+                    </p>
+
+                    <span class="badge bg-primary">
+
+                        {{ edu.get_education_type_display }}
+
+                    </span>
+
+                    {% if edu.specialization %}
+
+                    <span class="badge bg-info">
+
+                        {{ edu.specialization }}
+
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+                <div class="col-lg-3 text-lg-end mt-3 mt-lg-0">
+
+                    <h6 class="mb-2">
+
+                        Passing Year
+
+                    </h6>
+
+                    <strong>
+
+                        {{ edu.passing_year }}
+
+                    </strong>
+
+                    <hr>
+
+                    {% if edu.percentage %}
+
+                    <span class="badge bg-success">
+
+                        {{ edu.percentage }} %
+
+                    </span>
+
+                    {% endif %}
+
+                    {% if edu.cgpa %}
+
+                    <span class="badge bg-warning text-dark">
+
+                        CGPA {{ edu.cgpa }}
+
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            <div class="mt-3 text-end">
+
+                <a href="{% url 'edit_education' edu.id %}"
+
+                   class="btn btn-outline-primary btn-sm">
+
+                    <i class="bi bi-pencil-square"></i>
+
+                    Edit
+
+                </a>
+
+                <a href="{% url 'delete_education' edu.id %}"
+
+                   class="btn btn-outline-danger btn-sm">
+
+                    <i class="bi bi-trash"></i>
+
+                    Delete
+
+                </a>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div class="text-center py-5">
+
+            <i class="bi bi-mortarboard display-3 text-muted"></i>
+
+            <h5 class="mt-3">
+
+                No Education Added
+
+            </h5>
+
+            <p class="text-muted">
+
+                Add your education to complete your profile.
+
+            </p>
+
+            <button type="button"
+               data-bs-toggle="modal"
+               data-bs-target="#educationModal"
+               class="btn btn-primary">
+
+                Add Education
+
+            </button>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<!-- ================= PROJECTS ================= -->
+
+<div class="card mb-4 profile-section-card">
+
+    <!-- Header -->
+
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+
+        <h4 class="mb-0">
+
+            <i class="bi bi-code-square text-primary"></i>
+
+            Projects
+
+        </h4>
+
+        <button
+            type="button"
+            data-bs-toggle="modal"
+            data-bs-target="#addProjectModal"
+            class="btn btn-primary btn-sm">
+
+            <i class="bi bi-plus-circle"></i>
+
+            Add
+
+        </button>
+
+    </div>
+
+
+    <!-- Body -->
+
+    <div class="card-body">
+
+        {% for project in profile.projects.all %}
+
+        <div class="project-card mb-3">
+
+            <div class="row">
+
+
+                <!-- LEFT SIDE -->
+
+                <div class="col-lg-9">
+
+                    <!-- Project Title -->
+
+                    <h5 class="fw-bold text-primary mb-1">
+
+                        {{ project.project_title }}
+
+                    </h5>
+
+
+                    <!-- Role -->
+
+                    {% if project.role %}
+
+                    <h6 class="mb-2 text-dark">
+
+                        {{ project.role }}
+
+                    </h6>
+
+                    {% endif %}
+
+
+                    <!-- Description -->
+
+                    <p class="text-muted mb-2 project-description">
+
+                        {{ project.project_description }}
+
+                    </p>
+
+
+                    <!-- Technologies -->
+
+                    {% if project.technologies_used %}
+
+                    <div class="project-technologies">
+
+                        <small class="fw-semibold text-dark me-1">
+
+                            Technologies:
+
+                        </small>
+
+                        <span class="badge bg-primary">
+
+                            {{ project.technologies_used }}
+
+                        </span>
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- RIGHT SIDE -->
+
+                <div class="col-lg-3 text-lg-end mt-3 mt-lg-0 project-duration">
+
+                    <h6 class="mb-2">
+
+                        Project Duration
+
+                    </h6>
+
+
+                    <strong>
+
+                        {{ project.start_date|date:"M Y" }}
+
+                        -
+
+                        {% if project.currently_working %}
+
+                            Present
+
+                        {% elif project.end_date %}
+
+                            {{ project.end_date|date:"M Y" }}
+
+                        {% else %}
+
+                            -
+
+                        {% endif %}
+
+                    </strong>
+
+
+                    <hr>
+
+
+                    {% if project.currently_working %}
+
+                    <span class="badge bg-success">
+
+                        Currently Working
+
+                    </span>
+
+                    {% else %}
+
+                    <span class="badge bg-primary">
+
+                        Completed
+
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- PROJECT LINKS + ACTIONS -->
+
+            <div class="project-actions border-top pt-2 mt-2 d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    {% if project.github_url %}
+
+                    <a
+                        href="{{ project.github_url }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="btn btn-outline-dark btn-sm me-1">
+
+                        <i class="bi bi-github"></i>
+
+                        GitHub
+
+                    </a>
+
+                    {% endif %}
+
+
+                    {% if project.live_url %}
+
+                    <a
+                        href="{{ project.live_url }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="btn btn-outline-success btn-sm">
+
+                        <i class="bi bi-box-arrow-up-right"></i>
+
+                        Live Demo
+
+                    </a>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div>
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-primary btn-sm editProjectBtn"
+
+                        data-id="{{ project.id }}"
+
+                        data-title="{{ project.project_title|escape }}"
+
+                        data-role="{{ project.role|escape }}"
+
+                        data-description="{{ project.project_description|escape }}"
+
+                        data-technologies="{{ project.technologies_used|escape }}"
+
+                        data-github="{{ project.github_url|default:''|escape }}"
+
+                        data-live="{{ project.live_url|default:''|escape }}"
+
+                        data-start="{{ project.start_date|date:'Y-m-d' }}"
+
+                        data-end="{% if project.end_date %}{{ project.end_date|date:'Y-m-d' }}{% endif %}"
+
+                        data-currentlyworking="{% if project.currently_working %}true{% else %}false{% endif %}"
+
+                        data-bs-toggle="modal"
+                        data-bs-target="#editProjectModal">
+
+                        <i class="bi bi-pencil-square"></i>
+
+                        Edit
+
+                    </button>
+
+
+                    <a
+                        href="{% url 'delete_project' project.id %}"
+                        class="btn btn-outline-danger btn-sm"
+
+                        onclick="return confirm('Are you sure you want to delete this project?')">
+
+                        <i class="bi bi-trash"></i>
+
+                        Delete
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {% empty %}
+
+        <!-- EMPTY STATE -->
+
+        <div class="text-center py-5">
+
+            <i class="bi bi-code-square display-3 text-muted"></i>
+
+            <h5 class="mt-3">
+
+                No Projects Added
+
+            </h5>
+
+            <p class="text-muted">
+
+                Add your projects to showcase your skills and experience.
+
+            </p>
+
+            <button
+                type="button"
+                data-bs-toggle="modal"
+                data-bs-target="#addProjectModal"
+                class="btn btn-primary">
+
+                <i class="bi bi-plus-circle"></i>
+
+                Add Project
+
+            </button>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+
+
+<!-- ================= PROFESSIONAL DETAILS ================= -->
+
+<div class="card border-0 shadow-lg mb-4">
+
+    <div class="card-header bg-white">
+
+        <h4 class="mb-0">
+
+            <i class="bi bi-person-workspace text-primary"></i>
+
+            Professional Details
+
+        </h4>
+
+    </div>
+
+    <div class="card-body">
+
+        <!-- Skills -->
+
+        <h5 class="mb-3">
+
+            <i class="bi bi-lightning-charge-fill text-warning"></i>
+
+            Skills
+
+        </h5>
+
+        {% for skill in profile.skills.all %}
+
+            <span class="skill-chip">
+
+                {{ skill.name }}
+
+            </span>
+
+        {% empty %}
+
+            <p class="text-muted">
+
+                No Skills Added
+
+            </p>
+
+        {% endfor %}
+
+        <hr>
+
+        <!-- Preferred Job Position -->
+
+        <h5 class="mb-3">
+
+            <i class="bi bi-briefcase-fill text-primary"></i>
+
+            Preferred Job Positions
+
+        </h5>
+
+        {% for position in profile.job_positions.all %}
+
+            <span class="position-chip">
+
+                {{ position.name }}
+
+            </span>
+
+        {% empty %}
+
+            <p class="text-muted">
+
+                No Preferred Position
+
+            </p>
+
+        {% endfor %}
+
+        <hr>
+
+        <!-- Preferred Locations -->
+
+        <h5 class="mb-3">
+
+            <i class="bi bi-geo-alt-fill text-danger"></i>
+
+            Preferred Locations
+
+        </h5>
+
+        {% for location in profile.job_locations.all %}
+
+            <span class="location-chip">
+
+                {{ location.city }}
+
+            </span>
+
+        {% empty %}
+
+            <p class="text-muted">
+
+                No Preferred Locations
+
+            </p>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+
+
+<!-- ================= PERSONAL DETAILS ================= -->
+
+<div class="row">
+
+        <div class="col-lg-6">
+
+            <div class="card border-0 shadow-lg h-100">
+
+                <div class="card-header bg-white">
+
+                    <h5>
+
+                        <i class="bi bi-controller text-danger"></i>
+
+                        Hobbies
+
+                    </h5>
+
+                </div>
+
+                    <div class="card-body">
+
+                        {% for hobby in profile.hobbies.all %}
+
+                            <span class="hobby-chip">
+
+                            {{ hobby.name }}
+
+                            </span>
+
+                        {% empty %}
+
+                            <p class="text-muted">
+
+                            No Hobbies Added
+
+                            </p>
+
+                        {% endfor %}
+
+                </div>
+                
+            </div>
+
+        </div>
+
+
+
+
+<div class="col-lg-6">
+
+    <div class="card border-0 shadow-lg h-100">
+
+                <div class="card-header bg-white">
+
+                        <h5>
+
+                        <i class="bi bi-stars text-success"></i>
+
+                        Interests
+
+                        </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    {% for interest in profile.interests.all %}
+
+                            <span class="interest-chip">
+
+                                {{ interest.name }}
+
+                            </span>
+
+                        {% empty %}
+
+                            <p class="text-muted">
+
+                            No Interests Added
+
+                            </p>
+
+                    {% endfor %}
+
+                 </div>
+             </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<!-- ================= Add Education Modal ================= -->
+
+<div class="modal fade" id="educationModal" tabindex="-1">
+
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+
+            <div class="modal-content border-0 shadow">
+
+              <form
+                    method="POST"
+                    action="{% url 'add_education' %}">
+
+                    {% csrf_token %}
+
+                    {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-warning">{{ message }}</div>
+                    {% endfor %}
+                    {% endif %}
+
+                    <!-- Header -->
+
+                    <div class="modal-header border-0 pb-0">
+
+                    <div>
+
+                    <h3 class="fw-bold mb-1">
+
+                    Add Education
+
+                    </h3>
+
+                    <p class="text-muted mb-0">
+
+                    Enter your academic qualification.
+
+                    </p>
+
+                    </div>
+
+                    <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+
+                    </button>
+
+                    </div>
+
+                    <!-- Body -->
+
+                    <div class="modal-body">
+
+                    <div class="row">
+
+                    <!-- Education -->
+
+                    <div class="col-md-6 mb-3">
+
+                    <label class="form-label">
+
+                    Education Level
+
+                    </label>
+
+                    <select
+                    name="education_type"
+                    class="form-select"
+                    required>
+
+                    <option value="">
+
+                    Select
+
+                    </option>
+
+                    <option value="10TH">
+
+                    10th
+
+                    </option>
+
+                    <option value="12TH">
+
+                    12th
+
+                    </option>
+
+                    <option value="GRADUATION">
+
+                    Graduation
+
+                    </option>
+
+                    <option value="POST_GRADUATION">
+
+                    Post Graduation
+
+                    </option>
+
+                    <option value="OTHER">
+
+                    Other
+
+                    </option>
+
+                    </select>
+
+                    </div>
+
+                    <!-- Passing -->
+
+                    <div class="col-md-6 mb-3">
+
+                    <label class="form-label">
+
+                    Passing Year
+
+                    </label>
+
+                    <input
+                    type="number"
+                    name="passing_year"
+                    class="form-control"
+                    required>
+
+                    </div>
+
+                    <!-- Institute -->
+
+                    <div class="col-md-12 mb-3">
+
+                    <label class="form-label">
+
+                    Institution Name
+
+                    </label>
+
+                    <input
+                    type="text"
+                    name="institution_name"
+                    class="form-control"
+                    required>
+
+                    </div>
+
+                    <!-- Board -->
+
+                    <div class="col-md-6 mb-3">
+
+                    <label class="form-label">
+
+                    Board / University
+
+                    </label>
+
+                    <input
+                    type="text"
+                    name="board_or_university"
+                    class="form-control"
+                    required>
+
+                    </div>
+
+                    <!-- Course -->
+
+                    <div class="col-md-6 mb-3">
+
+                    <label class="form-label">
+
+                    Course
+
+                    </label>
+
+                    <input
+                    type="text"
+                    name="course_name"
+                    class="form-control">
+
+                    </div>
+
+                    <!-- Specialization -->
+
+                    <div class="col-md-6 mb-3">
+
+                    <label class="form-label">
+
+                    Specialization
+
+                    </label>
+
+                    <input
+                    type="text"
+                    name="specialization"
+                    class="form-control">
+
+                    </div>
+
+                    <!-- Percentage -->
+
+                    <div class="col-md-3 mb-3">
+
+                    <label class="form-label">
+
+                    Percentage
+
+                    </label>
+
+                    <input
+                    type="number"
+                    step="0.01"
+                    name="percentage"
+                    class="form-control">
+
+                    </div>
+
+                    <!-- CGPA -->
+
+                    <div class="col-md-3 mb-3">
+
+                    <label class="form-label">
+
+                    CGPA
+
+                    </label>
+
+                    <input
+                    type="number"
+                    step="0.01"
+                    name="cgpa"
+                    class="form-control">
+
+                    </div>
+
+                    </div>
+
+                    </div>
+
+                    <!-- Footer -->
+
+                    <div class="modal-footer border-0">
+
+                    <button
+                    type="button"
+                    class="btn btn-light"
+                    data-bs-dismiss="modal">
+
+                    Cancel
+
+                    </button>
+
+                    <button
+                    type="submit"
+                    class="btn btn-primary">
+
+                    Save Education
+
+                    </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+</div>
+
+<!-- ================= Add Project Modal ================= -->
+
+<div
+    class="modal fade"
+    id="addProjectModal"
+    tabindex="-1"
+    aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content border-0 shadow">
+
+            <form
+                method="POST"
+                action="{% url 'add_project' %}">
+
+                {% csrf_token %}
+
+                {% if messages %}
+
+                    {% for message in messages %}
+
+                        <div class="alert alert-warning">
+
+                            {{ message }}
+
+                        </div>
+
+                    {% endfor %}
+
+                {% endif %}
+
+
+                <!-- Header -->
+
+                <div class="modal-header border-0 pb-0">
+
+                    <div>
+
+                        <h3 class="fw-bold mb-1">
+
+                            Add Project
+
+                        </h3>
+
+                        <p class="text-muted mb-0">
+
+                            Add your academic, personal or professional project.
+
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+
+                    </button>
+
+                </div>
+
+
+                <!-- Body -->
+
+                <div class="modal-body">
+
+                    <div class="row">
+
+
+                        <!-- Project Title -->
+
+                        <div class="col-md-8 mb-3">
+
+                            <label class="form-label">
+
+                                Project Title
+
+                            </label>
+
+                            <input
+                                type="text"
+                                name="project_title"
+                                class="form-control"
+                                placeholder="e.g. Student Placement System"
+                                required>
+
+                        </div>
+
+
+                        <!-- Role -->
+
+                        <div class="col-md-4 mb-3">
+
+                            <label class="form-label">
+
+                                Your Role
+
+                            </label>
+
+                            <input
+                                type="text"
+                                name="role"
+                                class="form-control"
+                                placeholder="e.g. Full Stack Developer">
+
+                        </div>
+
+
+                        <!-- Description -->
+
+                        <div class="col-md-12 mb-3">
+
+                            <label class="form-label">
+
+                                Project Description
+
+                            </label>
+
+                            <textarea
+                                name="project_description"
+                                class="form-control"
+                                rows="4"
+                                placeholder="Describe your project, features and your contribution..."
+                                required></textarea>
+
+                        </div>
+
+
+                        <!-- Technologies -->
+
+                        <div class="col-md-12 mb-3">
+
+                            <label class="form-label">
+
+                                Technologies Used
+
+                            </label>
+
+                            <input
+                                type="text"
+                                name="technologies_used"
+                                class="form-control"
+                                placeholder="Python, Django, HTML, CSS, JavaScript">
+
+                            <small class="text-muted">
+
+                                Separate multiple technologies with commas.
+
+                            </small>
+
+                        </div>
+
+
+                        <!-- Start Date -->
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+
+                                Start Date
+
+                            </label>
+
+                            <input
+                                type="date"
+                                name="start_date"
+                                class="form-control"
+                                required>
+
+                        </div>
+
+
+                        <!-- End Date -->
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+
+                                End Date
+
+                            </label>
+
+                            <input
+                                type="date"
+                                name="end_date"
+                                class="form-control"
+                                id="projectEndDate">
+
+                        </div>
+
+
+                        <!-- Currently Working -->
+
+                        <div class="col-md-12 mb-3">
+
+                            <div class="form-check">
+
+                                <input
+                                    type="checkbox"
+                                    name="currently_working"
+                                    class="form-check-input"
+                                    id="currentlyWorking">
+
+                                <label
+                                    class="form-check-label"
+                                    for="currentlyWorking">
+
+                                    I am currently working on this project
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- GitHub -->
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+
+                                GitHub URL
+
+                            </label>
+
+                            <input
+                                type="url"
+                                name="github_url"
+                                class="form-control"
+                                placeholder="https://github.com/username/project">
+
+                        </div>
+
+
+                        <!-- Live URL -->
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+
+                                Live Project URL
+
+                            </label>
+
+                            <input
+                                type="url"
+                                name="live_url"
+                                class="form-control"
+                                placeholder="https://yourproject.com">
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+                <!-- Footer -->
+
+                <div class="modal-footer border-0">
+
+                    <button
+                        type="button"
+                        class="btn btn-light"
+                        data-bs-dismiss="modal">
+
+                        Cancel
+
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        <i class="bi bi-plus-circle me-1"></i>
+
+                        Save Project
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const checkbox =
+        document.getElementById("currentlyWorking");
+
+    const endDate =
+        document.getElementById("projectEndDate");
+
+
+    checkbox.addEventListener("change", function () {
+
+        if (this.checked) {
+
+            endDate.value = "";
+            endDate.disabled = true;
+
+        } else {
+
+            endDate.disabled = false;
+
+        }
+
+    });
+
+});
+
+</script>
+
+{% endblock %}

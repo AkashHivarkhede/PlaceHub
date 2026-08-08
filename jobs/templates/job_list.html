@@ -1,0 +1,176 @@
+{% extends 'home.html' %}
+{% load static %}
+{% block content %}
+  <div class="container-fluid py-4">
+    <div class="row">
+      <!-- Left Filter -->
+
+      <div class="col-lg-3">
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-white">
+            <h5>Filters</h5>
+          </div>
+
+          <div class="card-body">
+            <form method="GET">
+              <div class="mb-3">
+                <label>Keyword</label>
+
+                <input type="text" name="keyword" class="form-control" placeholder="Python Developer" />
+              </div>
+
+              <div class="mb-3">
+                <label>Location</label>
+
+                <input type="text" name="location" class="form-control" placeholder="Pune" />
+              </div>
+
+              <div class="mb-3">
+                <label>Experience</label>
+
+                <select class="form-select" name="experience">
+                  <option value="">Any</option>
+                  <option value="0">Fresher</option>
+                  <option value="1">1 Year</option>
+                  <option value="2">2 Years</option>
+                  <option value="3">3 Years</option>
+                  <option value="5">5+ Years</option>
+                </select>
+              </div>
+
+              <button class="btn btn-primary w-100">Search</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Job List -->
+
+      <div class="col-lg-9">
+        <h3 class="mb-4">Latest Job Openings</h3>
+
+        {% for job in jobs %}
+          <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <h4 class="mb-1">{{ job.job_title }}</h4>
+
+                  <h6 class="text-primary">{{ job.company.company_name }}</h6>
+                </div>
+
+                <div>
+                  <span class="badge bg-success">{{ job.employment_type }}</span>
+                </div>
+              </div>
+
+              <hr />
+
+              <div class="row">
+                <div class="col-md-3">
+                  <strong>Experience</strong>
+
+                  <br />
+
+                  {{ job.experience }} Years
+                </div>
+
+                <div class="col-md-3">
+                  <strong>Salary</strong>
+
+                  <br />
+
+                  ₹ {{ job.salary_package }}
+                </div>
+
+                <div class="col-md-3">
+                  <strong>Location</strong>
+
+                  <br />
+
+                  {{ job.location }}
+                </div>
+
+                <div class="col-md-3">
+                  <strong>Vacancies</strong>
+
+                  <br />
+
+                  {{ job.vacancies }}
+                </div>
+              </div>
+
+              <hr />
+
+              <strong>Skills</strong>
+
+              <br /><br />
+
+              {% for skill in job.required_skills.all %}
+                <span class="badge bg-light text-dark border me-2 mb-2">{{ skill.name }}</span>
+              {% empty %}
+                No Skills Mentioned
+              {% endfor %}
+
+              <hr />
+
+              <strong>Qualification</strong>
+
+              <br /><br />
+
+              {% for q in job.required_qualifications.all %}
+                <span class="badge bg-info">{{ q.name }}</span>
+              {% endfor %}
+
+              <hr />
+
+              <p>{{ job.job_description|truncatewords:35 }}</p>
+
+              <div class="d-flex justify-content-between">
+                <small class="text-muted">
+                  Posted :
+
+                  {{ job.posted_at }}
+                </small>
+
+                <div>
+                  {% if user.is_authenticated %}
+                    {% if job.id in applied_jobs %}
+                      <a href="{% url 'job_detail' job.id %}" class="btn btn-outline-primary">View Details</a>
+                      <button class="btn btn-success" disabled>
+                        <i class="bi bi-check-circle-fill me-1"></i>
+                        Applied
+                      </button>
+                    {% else %}
+                      <a href="{% url 'job_detail' job.id %}" class="btn btn-primary">Apply Now</a>
+                    {% endif %}
+                  {% else %}
+                    <a href="{% url 'login' %}?next={% url 'apply_job' job.id %}" class="btn btn-primary">Apply Now</a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <div class="alert alert-info">No Jobs Available</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <style>
+    body {
+      background: #f5f5f5;
+    }
+    
+    .card {
+      border-radius: 15px;
+    }
+    
+    .badge {
+      font-size: 14px;
+    
+      padding: 8px 12px;
+    }
+  </style>
+{% endblock %}
