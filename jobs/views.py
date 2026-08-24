@@ -4,9 +4,9 @@ from django.contrib.auth.decorators import login_required
 from .models import JobApplication , JobRequirement 
 from students.models import StudentProfile
 from django.db.models import Q
+from django.core.paginator import Paginator
 
 # Create your views here.
-
 
 
 def job_list(request):
@@ -28,7 +28,6 @@ def job_list(request):
             Q(job_title__icontains=keyword) |
             Q(company__company_name__icontains=keyword) |
             Q(job_description__icontains=keyword) |
-            Q(company__company_name__icontains=keyword) |
             Q(required_skills__name__icontains=keyword)
         ).distinct()
 
@@ -49,6 +48,22 @@ def job_list(request):
 
     jobs = jobs.order_by("-posted_at")
 
+
+    # ==============================
+    # PAGINATION
+    # ==============================
+
+    paginator = Paginator(jobs, 5)
+
+    page_number = request.GET.get("page")
+
+    page_obj = paginator.get_page(page_number)
+
+
+    # ==============================
+    # APPLIED JOBS
+    # ==============================
+
     applied_jobs = []
 
     if request.user.is_authenticated:
@@ -67,9 +82,12 @@ def job_list(request):
         except StudentProfile.DoesNotExist:
             pass
 
+
     context = {
 
-        "jobs": jobs,
+        "jobs": page_obj,
+
+        "page_obj": page_obj,
 
         "keyword": keyword,
 
@@ -88,8 +106,6 @@ def job_list(request):
         "job_list.html",
         context
     )
-
-
 
 
 def job_detail(request, id):

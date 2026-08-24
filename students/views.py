@@ -4,6 +4,7 @@ from django.shortcuts import render  , redirect , get_object_or_404
 from .models import Hobby, Interest, JobLocation, JobPosition, Skill, StudentProfile , CompanyProfile  , Education , Project
 from django.contrib.auth.decorators import login_required
 from jobs.models import JobRequirement , JobApplication 
+from django.core.paginator import Paginator
 
 # Create your views here.
     
@@ -522,46 +523,108 @@ def delete_project(request, id):
 
     return redirect("edit_profile")
 
-   
+
 @login_required
 def student_dashboard(request):
+
     if request.method == 'GET':
+
         profile = request.user.student_profile
-        applications = profile.applications.select_related('job', 'job__company')
-        latest_jobs = JobRequirement.objects.order_by('-posted_at')[:5]
+
+        applications = profile.applications.select_related(
+            'job',
+            'job__company'
+        ).order_by('-applied_at')
+
+
+        # ==============================
+        # APPLICATION PAGINATION
+        # ==============================
+
+        paginator = Paginator(
+            applications,
+            5
+        )
+
+        page_number = request.GET.get('page')
+
+        applications_page = paginator.get_page(
+            page_number
+        )
+
+
+        # ==============================
+        # LATEST JOBS
+        # ==============================
+
+        latest_jobs = JobRequirement.objects.order_by(
+            '-posted_at'
+        )[:5]
+
+
+        # ==============================
+        # STATISTICS
+        # ==============================
+
         total_jobs = JobRequirement.objects.count()
-        applied_jobs = JobApplication.objects.filter(student=request.user.student_profile).count()
-        shortlisted = JobApplication.objects.filter(student=request.user.student_profile, stage='SHORTLISTED').count()
-        selected = JobApplication.objects.filter(student=request.user.student_profile, stage='selected').count()
+
+        applied_jobs = JobApplication.objects.filter(
+            student=request.user.student_profile
+        ).count()
+
+        shortlisted = JobApplication.objects.filter(
+            student=request.user.student_profile,
+            stage='SHORTLISTED'
+        ).count()
+
+        selected = JobApplication.objects.filter(
+            student=request.user.student_profile,
+            stage='selected'
+        ).count()
+
+
+        # ==============================
+        # APPLIED JOB IDs
+        # ==============================
 
         appliedJobs = []
-        
-        if request.user.is_authenticated:
-        
-            try:
 
-                student = request.user.student_profile
+        try:
 
-                appliedJobs = JobApplication.objects.filter(
-                    student=student
-                ).values_list(
-                    "job_id",
-                    flat=True
-                )
+            student = request.user.student_profile
 
-            except StudentProfile.DoesNotExist:
-                pass
-        
-        
-        
+            appliedJobs = JobApplication.objects.filter(
+                student=student
+            ).values_list(
+                "job_id",
+                flat=True
+            )
 
-        return render(request , 'dashboard.html',
-                       {'total_jobs': total_jobs, 
-                        'applied_jobs': applied_jobs, 
-                        'shortlisted': shortlisted,
-                        'selected': selected ,
-                        'applications': applications,
-                        'latest_jobs': latest_jobs,
-                        'appliedJobs' : appliedJobs
-                        })
+        except StudentProfile.DoesNotExist:
 
+            pass
+
+
+        return render(
+            request,
+            'dashboard.html',
+            {
+                'total_jobs': total_jobs,
+
+                'applied_jobs': applied_jobs,
+
+                'shortlisted': shortlisted,
+
+                'selected': selected,
+
+                # Keep the same context name
+                'applications': applications_page,
+
+                # Additional pagination object
+                'applications_page': applications_page,
+
+                'latest_jobs': latest_jobs,
+
+                'appliedJobs': appliedJobs,
+            }
+        )

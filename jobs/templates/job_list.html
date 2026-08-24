@@ -1,4 +1,715 @@
+
+
 {% extends 'home.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="row g-4">
+
+        <!-- ================= FILTER SIDEBAR ================= -->
+
+        <div class="col-lg-3 col-xl-3">
+
+            <div class="card border-0 shadow-sm rounded-4 sticky-lg-top"
+                 style="top: 90px;">
+
+                <div class="card-header bg-white border-0 py-3">
+
+                    <h5 class="fw-bold mb-0">
+
+                        <i class="bi bi-funnel text-primary me-2"></i>
+
+                        Filters
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <form method="GET">
+
+
+                        <!-- Keyword -->
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-semibold">
+
+                                Keyword
+
+                            </label>
+
+                            <div class="input-group">
+
+                                <span class="input-group-text bg-white">
+
+                                    <i class="bi bi-search text-muted"></i>
+
+                                </span>
+
+                                <input
+                                    type="text"
+                                    name="keyword"
+                                    value="{{ keyword|default:'' }}"
+                                    class="form-control"
+                                    placeholder="Python Developer">
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Location -->
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-semibold">
+
+                                Location
+
+                            </label>
+
+                            <div class="input-group">
+
+                                <span class="input-group-text bg-white">
+
+                                    <i class="bi bi-geo-alt text-muted"></i>
+
+                                </span>
+
+                                <input
+                                    type="text"
+                                    name="location"
+                                    value="{{ location|default:'' }}"
+                                    class="form-control"
+                                    placeholder="Pune">
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Experience -->
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-semibold">
+
+                                Experience
+
+                            </label>
+
+                            <select
+                                class="form-select"
+                                name="experience">
+
+                                <option value="">
+                                    Any Experience
+                                </option>
+
+                                <option
+                                    value="0"
+                                    {% if experience == "0" %}selected{% endif %}>
+
+                                    Fresher
+
+                                </option>
+
+                                <option
+                                    value="1"
+                                    {% if experience == "1" %}selected{% endif %}>
+
+                                    Up to 1 Year
+
+                                </option>
+
+                                <option
+                                    value="2"
+                                    {% if experience == "2" %}selected{% endif %}>
+
+                                    Up to 2 Years
+
+                                </option>
+
+                                <option
+                                    value="3"
+                                    {% if experience == "3" %}selected{% endif %}>
+
+                                    Up to 3 Years
+
+                                </option>
+
+                                <option
+                                    value="5"
+                                    {% if experience == "5" %}selected{% endif %}>
+
+                                    5+ Years
+
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- Employment Type -->
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-semibold">
+
+                                Employment Type
+
+                            </label>
+
+                            <select
+                                class="form-select"
+                                name="employment_type">
+
+                                <option value="">
+                                    All Types
+                                </option>
+
+                                <!-- Keep your actual values here -->
+
+                            </select>
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-100 rounded-pill">
+
+                            <i class="bi bi-search me-1"></i>
+
+                            Search Jobs
+
+                        </button>
+
+
+                        {% if keyword or location or experience or employment_type %}
+
+                        <div class="text-center mt-3">
+
+                            <a
+                                href="{% url 'job_list' %}"
+                                class="text-decoration-none text-muted small">
+
+                                <i class="bi bi-x-circle me-1"></i>
+
+                                Clear Filters
+
+                            </a>
+
+                        </div>
+
+                        {% endif %}
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= JOB LIST ================= -->
+
+        <div class="col-lg-9 col-xl-9">
+
+
+            <!-- Heading -->
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <div>
+
+                    <h3 class="fw-bold mb-1">
+
+                        Latest Job Openings
+
+                    </h3>
+
+                    <p class="text-muted mb-0">
+
+                        Find opportunities that match your skills.
+
+                    </p>
+
+                </div>
+
+
+                {% if page_obj.paginator.count %}
+
+                <span class="badge bg-primary rounded-pill px-3 py-2">
+
+                    {{ page_obj.paginator.count }} Jobs
+
+                </span>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- JOBS -->
+
+            {% for job in jobs %}
+
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+
+                <div class="card-body p-4">
+
+
+                    <!-- Header -->
+
+                    <div class="d-flex justify-content-between align-items-start gap-3">
+
+                        <div>
+
+                            <h4 class="fw-bold mb-1">
+
+                                {{ job.job_title }}
+
+                            </h4>
+
+                            <div class="text-primary fw-semibold">
+
+                                <i class="bi bi-building me-1"></i>
+
+                                {{ job.company.company_name }}
+
+                            </div>
+
+                        </div>
+
+
+                        <span class="badge bg-success rounded-pill px-3 py-2">
+
+                            {{ job.employment_type }}
+
+                        </span>
+
+                    </div>
+
+
+                    <hr class="my-3">
+
+
+                    <!-- Job Info -->
+
+                    <div class="row g-3">
+
+                        <div class="col-6 col-md-3">
+
+                            <div class="text-muted small">
+
+                                <i class="bi bi-briefcase me-1"></i>
+
+                                Experience
+
+                            </div>
+
+                            <div class="fw-semibold mt-1">
+
+                                {{ job.experience }} Years
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-6 col-md-3">
+
+                            <div class="text-muted small">
+
+                                <i class="bi bi-currency-rupee me-1"></i>
+
+                                Salary
+
+                            </div>
+
+                            <div class="fw-semibold mt-1">
+
+                                ₹ {{ job.salary_package }}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-6 col-md-3">
+
+                            <div class="text-muted small">
+
+                                <i class="bi bi-geo-alt me-1"></i>
+
+                                Location
+
+                            </div>
+
+                            <div class="fw-semibold mt-1">
+
+                                {{ job.location }}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-6 col-md-3">
+
+                            <div class="text-muted small">
+
+                                <i class="bi bi-people me-1"></i>
+
+                                Vacancies
+
+                            </div>
+
+                            <div class="fw-semibold mt-1">
+
+                                {{ job.vacancies }}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <hr class="my-3">
+
+
+                    <!-- Skills -->
+
+                    <div class="mb-3">
+
+                        <div class="fw-semibold mb-2">
+
+                            Skills
+
+                        </div>
+
+                        <div>
+
+                            {% for skill in job.required_skills.all %}
+
+                            <span class="badge bg-light text-dark border me-1 mb-1">
+
+                                {{ skill.name }}
+
+                            </span>
+
+                            {% empty %}
+
+                            <span class="text-muted small">
+
+                                No skills mentioned
+
+                            </span>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Qualification -->
+
+                    <div class="mb-3">
+
+                        <div class="fw-semibold mb-2">
+
+                            Qualification
+
+                        </div>
+
+                        <div>
+
+                            {% for q in job.required_qualifications.all %}
+
+                            <span class="badge bg-info bg-opacity-10  border border-info me-1 mb-1">
+
+                                {{ q.name }}
+
+                            </span>
+
+                            {% empty %}
+
+                            <span class="text-muted small">
+
+                                No qualification mentioned
+
+                            </span>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Description -->
+
+                    <p class="text-muted mb-3">
+
+                        {{ job.job_description|truncatewords:35 }}
+
+                    </p>
+
+
+                    <hr class="my-3">
+
+
+                    <!-- Footer -->
+
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+                        <small class="text-muted">
+
+                            <i class="bi bi-clock me-1"></i>
+
+                            Posted:
+
+                            {{ job.posted_at|date:"d M Y" }}
+
+                        </small>
+
+
+                        <div>
+
+                            {% if user.is_authenticated %}
+
+                                {% if job.id in applied_jobs %}
+
+                                    <a
+                                        href="{% url 'job_detail' job.id %}"
+                                        class="btn btn-outline-primary btn-sm rounded-pill me-1">
+
+                                        View Details
+
+                                    </a>
+
+                                    <button
+                                        class="btn btn-success btn-sm rounded-pill"
+                                        disabled>
+
+                                        <i class="bi bi-check-circle-fill me-1"></i>
+
+                                        Applied
+
+                                    </button>
+
+                                {% else %}
+
+                                    <a
+                                        href="{% url 'job_detail' job.id %}"
+                                        class="btn btn-primary btn-sm rounded-pill">
+
+                                        View & Apply
+
+                                        <i class="bi bi-arrow-right ms-1"></i>
+
+                                    </a>
+
+                                {% endif %}
+
+                            {% else %}
+
+                                <a
+                                    href="{% url 'login' %}?next={% url 'job_detail' job.id %}"
+                                    class="btn btn-primary btn-sm rounded-pill">
+
+                                    Login to Apply
+
+                                    <i class="bi bi-arrow-right ms-1"></i>
+
+                                </a>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {% empty %}
+
+            <!-- EMPTY -->
+
+            <div class="card border-0 shadow-sm rounded-4">
+
+                <div class="card-body text-center py-5">
+
+                    <i class="bi bi-briefcase display-4 text-muted"></i>
+
+                    <h5 class="fw-bold mt-3">
+
+                        No Jobs Found
+
+                    </h5>
+
+                    <p class="text-muted mb-3">
+
+                        Try changing your search filters.
+
+                    </p>
+
+                    <a
+                        href="{% url 'job_list' %}"
+                        class="btn btn-primary rounded-pill">
+
+                        Clear Filters
+
+                    </a>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+
+            <!-- ================= PAGINATION ================= -->
+
+            {% if page_obj.has_other_pages %}
+
+            <nav
+                aria-label="Job pagination"
+                class="mt-4">
+
+                <ul class="pagination justify-content-center">
+
+
+                    {% if page_obj.has_previous %}
+
+                    <li class="page-item">
+
+                        <a
+                            class="page-link rounded-start-pill"
+                            href="?page={{ page_obj.previous_page_number }}{% if keyword %}&keyword={{ keyword|urlencode }}{% endif %}{% if location %}&location={{ location|urlencode }}{% endif %}{% if experience %}&experience={{ experience }}{% endif %}{% if employment_type %}&employment_type={{ employment_type }}{% endif %}">
+
+                            <i class="bi bi-chevron-left me-1"></i>
+
+                            Previous
+
+                        </a>
+
+                    </li>
+
+                    {% else %}
+
+                    <li class="page-item disabled">
+
+                        <span class="page-link rounded-start-pill">
+
+                            <i class="bi bi-chevron-left me-1"></i>
+
+                            Previous
+
+                        </span>
+
+                    </li>
+
+                    {% endif %}
+
+
+                    {% for num in page_obj.paginator.page_range %}
+
+                        {% if page_obj.number == num %}
+
+                        <li class="page-item active">
+
+                            <span class="page-link">
+
+                                {{ num }}
+
+                            </span>
+
+                        </li>
+
+                        {% else %}
+
+                        <li class="page-item">
+
+                            <a
+                                class="page-link"
+                                href="?page={{ num }}{% if keyword %}&keyword={{ keyword|urlencode }}{% endif %}{% if location %}&location={{ location|urlencode }}{% endif %}{% if experience %}&experience={{ experience }}{% endif %}{% if employment_type %}&employment_type={{ employment_type }}{% endif %}">
+
+                                {{ num }}
+
+                            </a>
+
+                        </li>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+
+                    {% if page_obj.has_next %}
+
+                    <li class="page-item">
+
+                        <a
+                            class="page-link rounded-end-pill"
+                            href="?page={{ page_obj.next_page_number }}{% if keyword %}&keyword={{ keyword|urlencode }}{% endif %}{% if location %}&location={{ location|urlencode }}{% endif %}{% if experience %}&experience={{ experience }}{% endif %}{% if employment_type %}&employment_type={{ employment_type }}{% endif %}">
+
+                            Next
+
+                            <i class="bi bi-chevron-right ms-1"></i>
+
+                        </a>
+
+                    </li>
+
+                    {% else %}
+
+                    <li class="page-item disabled">
+
+                        <span class="page-link rounded-end-pill">
+
+                            Next
+
+                            <i class="bi bi-chevron-right ms-1"></i>
+
+                        </span>
+
+                    </li>
+
+                    {% endif %}
+
+
+                </ul>
+
+            </nav>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+
+{% comment %} {% extends 'home.html' %}
 {% load static %}
 {% block content %}
   <div class="container-fluid py-4">
@@ -173,4 +884,6 @@
       padding: 8px 12px;
     }
   </style>
-{% endblock %}
+{% endblock %} {% endcomment %}
+
+
